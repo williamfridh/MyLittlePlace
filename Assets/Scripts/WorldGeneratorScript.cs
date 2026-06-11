@@ -11,10 +11,13 @@ public class WorldGeneratorScript : MonoBehaviour
     public TileBase desertTile;
     public TileBase waterTile;
 
-    // Trees
+    // Objects to spawn
     public GameObject treeBirchPrefab;
     public GameObject treeOakPrefab;
     public GameObject treePinePrefab;
+    public GameObject cactusPrefab;
+    public GameObject rockPrefab;
+    public GameObject grassPrefab;
 
     // Map generation parameters
     public float noiseScale = 0.08f;
@@ -43,6 +46,7 @@ public class WorldGeneratorScript : MonoBehaviour
     }
 
     BiomeType[,] biomeMap;
+    bool[,] occupiedMap;
 
     private void valueToScale(float value, out BiomeSelectionScale scale)
     {
@@ -62,23 +66,57 @@ public class WorldGeneratorScript : MonoBehaviour
 
     private void SpawnObject(int x, int y, BiomeType biome)
     {
+        // As the SpawnObject is typically called column then row wise,
+        // we can check the occupation of right and lower tile to determine
+        // the possible spawn size. Checks up too 3 on box axes, starting
+        // with column (x) and then row (y).
+        int max_x = 0;
+        int max_y = 0;
+        //if ()
+
         float spawnChance = Random.Range(0f, 1f);
         switch (biome)
         {
             case BiomeType.Meadow:
-                if (spawnChance < 0.01f)
+                if (spawnChance > 0 && spawnChance < 0.01f)
                 {
                     Instantiate(treeOakPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
                 }
-                else if (spawnChance < 0.05f)
+                else if (spawnChance > 0.01f && spawnChance < 0.03f)
+                {
+                    Instantiate(rockPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                }
+                else if (spawnChance > 0.03f && spawnChance < 0.05f)
                 {
                     Instantiate(treeBirchPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
                 }
+                else if (spawnChance > 0.05f && spawnChance < 0.5f)
+                {
+                    Instantiate(grassPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                }
                 break;
             case BiomeType.Forest:
-                if (spawnChance < 0.15f)
+                if (spawnChance > 0 && spawnChance < 0.03f)
+                {
+                    Instantiate(rockPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                }
+                else if (spawnChance > 0.03f && spawnChance < 0.15f)
                 {
                     Instantiate(treePinePrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                }
+                else if (spawnChance > 0.15f && spawnChance < 0.3f)
+                {
+                    Instantiate(grassPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                }
+                break;
+            case BiomeType.Mountain:
+                if (spawnChance > 0 && spawnChance < 0.10f)
+                {
+                    Instantiate(rockPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                }
+                else if (spawnChance > 0.10f && spawnChance < 0.02f)
+                {
+                    Instantiate(grassPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
                 }
                 break;
         }
@@ -87,6 +125,14 @@ public class WorldGeneratorScript : MonoBehaviour
     void Awake()
     {
         biomeMap = new BiomeType[width, height];
+        // Initilize occupied map to track which tiles are populated
+        // and set the default value to false (not occupied)
+        occupiedMap = new bool[width, height];
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                occupiedMap[x, y] = false;
+            }
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
