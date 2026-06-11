@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7702819089673986594}
   - component: {fileID: 5105574152987165685}
   - component: {fileID: 494901644558237735}
+  - component: {fileID: 7924027655677574136}
   m_Layer: 0
   m_Name: Rock
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 8782792672095233301}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.496, y: 11.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -131,7 +132,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: -0.25934267}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -156,6 +157,20 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 91bb16a030e84974e87fdbd1c9876a8f, type: 3}
   - {fileID: 21300000, guid: f0895a4629cfabb4491caa801239b71a, type: 3}
   - {fileID: 21300000, guid: fddf5cc265f2cd74ab51ba1168216450, type: 3}
+--- !u!114 &7924027655677574136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8782792672095233301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a6f423a88cc15d45b3be603ebeebc34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YSortSprite
+  precision: 100
+  sortingOffset: 0
 --- !u!1001 &7010685509346998884
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -164,6 +179,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5904726158251949853}
     m_Modifications:
+    - target: {fileID: 5464855246341071278, guid: dc52c4defb183754c973ac527dcf452b, type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5464855246341071278, guid: dc52c4defb183754c973ac527dcf452b, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5464855246341071278, guid: dc52c4defb183754c973ac527dcf452b, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 970303525
+      objectReference: {fileID: 0}
     - target: {fileID: 7639414888099700352, guid: dc52c4defb183754c973ac527dcf452b, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.0552815
@@ -178,7 +205,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7639414888099700352, guid: dc52c4defb183754c973ac527dcf452b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.302
+      value: 0.19
       objectReference: {fileID: 0}
     - target: {fileID: 7639414888099700352, guid: dc52c4defb183754c973ac527dcf452b, type: 3}
       propertyPath: m_LocalPosition.z

@@ -3,7 +3,11 @@ using UnityEngine.Tilemaps;
 
 public class WorldGeneratorScript : MonoBehaviour
 {
+
+    public static WorldGeneratorScript Instance { get; set; }
+
     // Tiles
+    [Header("Tile Settings")]
     public Tilemap groundTilemap;
     public TileBase forestTile;
     public TileBase meadowTile;
@@ -12,6 +16,7 @@ public class WorldGeneratorScript : MonoBehaviour
     public TileBase waterTile;
 
     // Objects to spawn
+    [Header("Object Settings")]
     public GameObject treeBirchPrefab;
     public GameObject treeOakPrefab;
     public GameObject treePinePrefab;
@@ -20,6 +25,7 @@ public class WorldGeneratorScript : MonoBehaviour
     public GameObject grassPrefab;
 
     // Map generation parameters
+    [Header("Generation Parameters")]
     public float noiseScale = 0.08f;
     private float temperatureOffsetX;
     private float temperatureOffsetY;
@@ -48,6 +54,21 @@ public class WorldGeneratorScript : MonoBehaviour
     BiomeType[,] biomeMap;
     bool[,] occupiedMap;
 
+    public BiomeType GetBiomeAtPosition(Vector3 position)
+    {
+        int x = Mathf.FloorToInt(position.x);
+        int y = Mathf.FloorToInt(position.y);
+
+        if (x >= 0 && x < width && y >= 0 && y < height)
+        {
+            return biomeMap[x, y];
+        }
+        else
+        {
+            throw new System.IndexOutOfRangeException("Position out of bounds of the biome map.");
+        }
+    }
+
     private void valueToScale(float value, out BiomeSelectionScale scale)
     {
         if (value < 0.33f)
@@ -64,59 +85,87 @@ public class WorldGeneratorScript : MonoBehaviour
         }
     }
 
+    private bool canFitSize(int x, int y, int sizeX, int sizeY)
+    {
+        for (int i = 0; i < sizeX; i++) {
+            for (int j = 0; j < sizeY; j++) {
+                if (x + i >= width || y + j >= height || occupiedMap[x + i, y + j]) {
+                    return false; // Out of bounds or tile is occupied
+                }
+            }
+        }
+        return true; // All tiles are within bounds and not occupied
+    }
+
+    private void markOccupied(int x, int y, int sizeX, int sizeY)
+    {
+        for (int i = 0; i < sizeX; i++) {
+            for (int j = 0; j < sizeY; j++) {
+                if (x + i < width && y + j < height) {
+                    occupiedMap[x + i, y + j] = true; // Mark tile as occupied
+                }
+            }
+        }
+    }
+
     private void SpawnObject(int x, int y, BiomeType biome)
     {
         // As the SpawnObject is typically called column then row wise,
         // we can check the occupation of right and lower tile to determine
-        // the possible spawn size. Checks up too 3 on box axes, starting
-        // with column (x) and then row (y).
-        int max_x = 0;
-        int max_y = 0;
-        //if ()
+        // the possible spawn size.
 
         float spawnChance = Random.Range(0f, 1f);
         switch (biome)
         {
             case BiomeType.Meadow:
-                if (spawnChance > 0 && spawnChance < 0.01f)
+                if (spawnChance > 0 && spawnChance < 0.01f && canFitSize(x, y, 2, 2))
                 {
-                    Instantiate(treeOakPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    Instantiate(treeOakPrefab, new Vector3(x + 1.0f, y + 1.0f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    markOccupied(x, y, 2, 1);
                 }
-                else if (spawnChance > 0.01f && spawnChance < 0.03f)
+                else if (spawnChance > 0.01f && spawnChance < 0.03f && canFitSize(x, y, 1, 1))
                 {
                     Instantiate(rockPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    markOccupied(x, y, 1, 1);
                 }
-                else if (spawnChance > 0.03f && spawnChance < 0.05f)
+                else if (spawnChance > 0.03f && spawnChance < 0.05f && canFitSize(x, y, 1, 2))
                 {
-                    Instantiate(treeBirchPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    Instantiate(treeBirchPrefab, new Vector3(x + 0.5f, y + 1.0f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    markOccupied(x, y, 1, 2);
                 }
-                else if (spawnChance > 0.05f && spawnChance < 0.5f)
+                else if (spawnChance > 0.05f && spawnChance < 0.5f && canFitSize(x, y, 1, 1))
                 {
                     Instantiate(grassPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    markOccupied(x, y, 1, 1);
                 }
                 break;
             case BiomeType.Forest:
-                if (spawnChance > 0 && spawnChance < 0.03f)
+                if (spawnChance > 0 && spawnChance < 0.03f && canFitSize(x, y, 1, 1))
                 {
                     Instantiate(rockPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    markOccupied(x, y, 1, 1);
                 }
-                else if (spawnChance > 0.03f && spawnChance < 0.15f)
+                else if (spawnChance > 0.03f && spawnChance < 0.15f && canFitSize(x, y, 2, 2))
                 {
-                    Instantiate(treePinePrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    Instantiate(treePinePrefab, new Vector3(x + 1.0f, y + 1.0f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    markOccupied(x, y, 2, 1);
                 }
-                else if (spawnChance > 0.15f && spawnChance < 0.3f)
+                else if (spawnChance > 0.15f && spawnChance < 0.3f && canFitSize(x, y, 1, 1))
                 {
                     Instantiate(grassPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    markOccupied(x, y, 1, 1);
                 }
                 break;
             case BiomeType.Mountain:
-                if (spawnChance > 0 && spawnChance < 0.10f)
+                if (spawnChance > 0 && spawnChance < 0.10f && canFitSize(x, y, 1, 1))
                 {
                     Instantiate(rockPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    markOccupied(x, y, 1, 1);
                 }
-                else if (spawnChance > 0.10f && spawnChance < 0.02f)
+                else if (spawnChance > 0.10f && spawnChance < 0.02f && canFitSize(x, y, 1, 1))
                 {
                     Instantiate(grassPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    markOccupied(x, y, 1, 1);
                 }
                 break;
         }
@@ -124,6 +173,10 @@ public class WorldGeneratorScript : MonoBehaviour
 
     void Awake()
     {
+        // Singleton pattern to ensure only one instance of WorldGeneratorScript exists
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
         biomeMap = new BiomeType[width, height];
         // Initilize occupied map to track which tiles are populated
         // and set the default value to false (not occupied)
@@ -192,6 +245,8 @@ public class WorldGeneratorScript : MonoBehaviour
                 {
                     biome = BiomeType.Water; // Default biome
                 }
+                // Save biome in map
+                biomeMap[x, y] = biome;
                 // Set tile
                 switch (biome)
                 {
