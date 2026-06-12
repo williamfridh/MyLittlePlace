@@ -12,6 +12,11 @@ public class PlayerScript : MonoBehaviour
     public Camera playerCamera;
     [SerializeField] private Animator _animator;
 
+
+    public float currentHorizontal; // -1 for left, 1 for right, 0 for no horizontal movement
+    public float currentVertical;   // -1 for down, 1 for up, 0
+    public bool isMoving;
+
     void Awake()
     {
         // Singleton pattern to ensure only one instance of PlayerScript exists
@@ -39,39 +44,43 @@ public class PlayerScript : MonoBehaviour
             if (Keyboard.current.leftArrowKey.isPressed)
             {
                 moveInput.x = -1f;
-                _animator.SetBool("isWalkingWest", true);
-                _animator.SetBool("isWalkingEast", false);
-                _animator.SetBool("isWalkingNorth", false);
-                _animator.SetBool("isWalkingSouth", false);
+                isMoving = true;
+                currentHorizontal = -1f;
+                currentVertical = 0f;
             }
             else if (Keyboard.current.rightArrowKey.isPressed)
             {
                 moveInput.x = 1f;
-                _animator.SetBool("isWalkingEast", true);
-                _animator.SetBool("isWalkingWest", false);
-                _animator.SetBool("isWalkingNorth", false);
-                _animator.SetBool("isWalkingSouth", false);
+                isMoving = true;
+                currentHorizontal = 1f;
+                currentVertical = 0f;
             }
             else if (Keyboard.current.upArrowKey.isPressed)
             {
                 moveInput.y = 1f;
-                _animator.SetBool("isWalkingNorth", true);
-                _animator.SetBool("isWalkingWest", false);
-                _animator.SetBool("isWalkingEast", false);
-                _animator.SetBool("isWalkingSouth", false);
+                isMoving = true;
+                currentVertical = 1f;
+                currentHorizontal = 0f;
             }
             else if (Keyboard.current.downArrowKey.isPressed)
             {
                 moveInput.y = -1f;
-                _animator.SetBool("isWalkingSouth", true);
-                _animator.SetBool("isWalkingWest", false);
-                _animator.SetBool("isWalkingEast", false);
-                _animator.SetBool("isWalkingNorth", false);
+                isMoving = true;
+                currentVertical = -1f;
+                currentHorizontal = 0f;
+            }
+            else
+            {
+                isMoving = false;
             }
         }
 
         // Apply the translation
         Vector3 moveDirection = new Vector3(moveInput.x, moveInput.y, 0f).normalized;
         transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+        // Update directional parameters for animation
+        _animator.SetBool("isMoving", isMoving);
+        _animator.SetFloat("Horizontal", currentHorizontal);
+        _animator.SetFloat("Vertical", currentVertical);
     }
 }

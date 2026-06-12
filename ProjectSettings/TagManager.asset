@@ -41,23 +41,11 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Ground
-    uniqueID: 682416559
-    locked: 0
   - name: Shadow
     uniqueID: 970303525
     locked: 0
   - name: Object
     uniqueID: 1721318635
-    locked: 0
-  - name: Player
-    uniqueID: 3571075029
-    locked: 0
-  - name: Grass
-    uniqueID: 3344399365
-    locked: 0
-  - name: Tree
-    uniqueID: 2276696777
     locked: 0
   m_RenderingLayers:
   - Default

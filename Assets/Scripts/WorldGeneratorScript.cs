@@ -22,7 +22,7 @@ public class WorldGeneratorScript : MonoBehaviour
     public GameObject treePinePrefab;
     public GameObject cactusPrefab;
     public GameObject rockPrefab;
-    public GameObject grassPrefab;
+    public GameObject bushPrefab;
 
     // Map generation parameters
     [Header("Generation Parameters")]
@@ -135,7 +135,7 @@ public class WorldGeneratorScript : MonoBehaviour
                 }
                 else if (spawnChance > 0.05f && spawnChance < 0.5f && canFitSize(x, y, 1, 1))
                 {
-                    Instantiate(grassPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    Instantiate(bushPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
                     markOccupied(x, y, 1, 1);
                 }
                 break;
@@ -152,7 +152,7 @@ public class WorldGeneratorScript : MonoBehaviour
                 }
                 else if (spawnChance > 0.15f && spawnChance < 0.3f && canFitSize(x, y, 1, 1))
                 {
-                    Instantiate(grassPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    Instantiate(bushPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
                     markOccupied(x, y, 1, 1);
                 }
                 break;
@@ -164,7 +164,7 @@ public class WorldGeneratorScript : MonoBehaviour
                 }
                 else if (spawnChance > 0.10f && spawnChance < 0.02f && canFitSize(x, y, 1, 1))
                 {
-                    Instantiate(grassPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    Instantiate(bushPrefab, new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, spawnedObjectsParent.transform);
                     markOccupied(x, y, 1, 1);
                 }
                 break;

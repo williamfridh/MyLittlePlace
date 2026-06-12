@@ -44,9 +44,25 @@ public class WeatherManagerScript : MonoBehaviour
     public float blendSpeed = 2.0f;
 
     private WorldGeneratorScript.BiomeType lastPlayerBiome;
+    private bool enabled = true;
 
      void Start()
     {
+        // Stop if no WorldGeneratorScript is present
+        if (WorldGeneratorScript.Instance == null)
+        {
+            Debug.LogError("WeatherManagerScript: No WorldGeneratorScript instance found in the scene.");
+            enabled = false;
+            return;
+        }
+        // Stop if no PlayerScript is present
+        if (PlayerScript.Instance == null)
+        {
+            Debug.LogError("WeatherManagerScript: No PlayerScript instance found in the scene.");
+            enabled = false;
+            return;
+        }
+        // Continue as normal
         Vector3 playerPos = PlayerScript.Instance.transform.position;
         WorldGeneratorScript.BiomeType playerBiome = WorldGeneratorScript.Instance.GetBiomeAtPosition(playerPos);
         switch(playerBiome)
@@ -79,6 +95,7 @@ public class WeatherManagerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!enabled) return;
         // Get player location
         Vector3 playerPos = PlayerScript.Instance.transform.position;
         // Get biome at player location
