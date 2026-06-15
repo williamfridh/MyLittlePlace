@@ -7,7 +7,10 @@ public class TimeManagerScript : MonoBehaviour
 
     [Header("Time Settings")]
     [Tooltip("How many real-world seconds per in-game minutes")]
-    public float secondsPerMinute = 1.0f;
+    public float inGameSecondsPerRealSecond = 60.0f;
+
+    [Header("UI Elements")]
+    public RectTransform clockHand; // Assign in Inspector: the hand of the clock to rotate
 
     private float totalInGameSeconds = 0f;
 
@@ -25,11 +28,25 @@ public class TimeManagerScript : MonoBehaviour
         else Destroy(gameObject);
     }
 
+    void Start()
+    {
+        // Initilize time to 12:00
+        totalInGameSeconds = SECONDS_PER_HOUR * 12; // Start at 12:00
+    }
+
     void Update()
     {
-        float gameSecondsPassed = Time.deltaTime * (SECONDS_PER_MINUTE / secondsPerMinute);
+        // Convert real seconds to in-game seconds
+        // (e.g., 1 real second = 60 in-game seconds)
+        float gameSecondsPassed = Time.deltaTime * inGameSecondsPerRealSecond;
         totalInGameSeconds += gameSecondsPassed;
-        Debug.Log("In-game time: " + GetFormattedTime() + " (Day " + GetCurrentDay() + ")" + " - Day/Night Ratio: " + GetTimeNightRatio().ToString("F2"));
+        //Debug.Log("In-game time: " + GetFormattedTime() + " (Day " + GetCurrentDay() + ")" + " - Day/Night Ratio: " + GetTimeNightRatio().ToString("F2"));
+        // Rotate clock hand
+        if (clockHand != null)
+        {
+            float rotationAngle = (totalInGameSeconds % SECONDS_PER_DAY) / SECONDS_PER_DAY * 360f - 135f; // -135 to start at 12:00 position
+            clockHand.localRotation = Quaternion.Euler(0, 0, -rotationAngle); // Rotate counter-clockwise
+        }
     }
 
     public int GetCurrentDay()
@@ -49,6 +66,7 @@ public class TimeManagerScript : MonoBehaviour
 
     public float GetTimeNightRatio()
     {
+        // Calculate the ratio of the current time to the full day (0.0 at 00:00, 0.5 at 12:00, 1.0 at 24:00)
         return (totalInGameSeconds % SECONDS_PER_DAY) / SECONDS_PER_DAY;
     }
 

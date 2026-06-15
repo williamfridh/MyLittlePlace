@@ -1,0 +1,265 @@
+using UnityEngine;
+using TMPro;
+using System.Linq;
+using System.Collections.Generic;
+
+public class TodoManagerScript : MonoBehaviour
+{
+    public static TodoManagerScript Instance { get; private set; }
+
+    // Todo and todo list (array)
+    [System.Serializable]
+    public class Todo
+    {
+        public int id;
+        public string title;
+        public bool isComplete;
+        public int parentId;
+    }
+    [System.Serializable]
+    private class TodoSerializationWrapper
+    {
+        public List<Todo> todoList;
+    }
+    public List<Todo> todoList = new List<Todo>();
+
+    [Header("Components")]
+    [SerializeField] private TextMeshProUGUI amountTextComponent;
+    [SerializeField] private GameObject todoContainer;
+    [SerializeField] private GameObject rightUiColumnEditing;
+    [SerializeField] private GameObject rightUiColumnNotEditing;
+    [Header("Prefabs")]
+    [SerializeField] private GameObject todoEntryPrefab;
+    [Header("Settings")]
+    [SerializeField] public bool isEditing = false;
+    [SerializeField] bool debugging;
+
+    private int totalTodos;
+    private int totalCompletedTodos;
+
+    public void EnableEditing()
+    {
+        isEditing = true;
+        SelectRightUIColumn();
+
+    }
+    public void DisableEditing()
+    {
+        isEditing = false;
+        SelectRightUIColumn();
+    }
+    void SelectRightUIColumn()
+    {
+        rightUiColumnEditing.SetActive(isEditing);
+        rightUiColumnNotEditing.SetActive(!isEditing);
+    }
+
+    public void AddTodo(string title, int parentId = 0)
+    {
+        int highestId = 0;
+        foreach(Todo todo in todoList)
+        {
+            if (todo.id > highestId)
+            {
+                highestId = todo.id;
+            }
+        }
+        Todo newTodo = new Todo
+        {
+            id = highestId + 1,
+            title = title,
+            isComplete = false,
+            parentId = parentId
+        };
+
+        todoList.Add(newTodo);
+        totalTodos++;
+        // Save and refresh
+        SaveToJson();
+        Refresh();
+    }
+
+    public void MarkTodoAsComplete(Todo todo)
+    {
+        if (todo != null)
+        {
+            todo.isComplete = true;
+            totalCompletedTodos++;
+        }
+        SaveToJson();
+        updateAmountText();
+        DrawTodo();
+    }
+
+    public void MarkTodoAsIncomplete(Todo todo)
+    {
+        if (todo != null && todo.isComplete)
+        {
+            todo.isComplete = false;
+            totalCompletedTodos--;
+        }
+        SaveToJson();
+        updateAmountText();
+        DrawTodo();
+    }
+
+    public void DeleteTodo(Todo todo)
+    {
+        todoList.Remove(todo);
+        Refresh();
+    }
+
+    public void DeleteAllComplete()
+    {
+        List<Todo> todosToDelete = new List<Todo>();
+        foreach (Todo todo in todoList)
+        {
+            if (todo.isComplete)
+            {
+                todosToDelete.Add(todo);
+            }
+        }
+        foreach (Todo todo in todosToDelete)
+        {
+            DeleteTodo(todo);
+        }
+    }
+
+    public void SaveToJson()
+    {
+        TodoSerializationWrapper wrapper = new TodoSerializationWrapper { todoList = todoList };
+        string json = JsonUtility.ToJson(wrapper, true);
+        System.IO.File.WriteAllText(Application.persistentDataPath + "/user_data_todo.json", json);
+    }
+
+    bool DeleteJsonFile()
+    {
+        string path = Application.persistentDataPath + "/todoList.json";
+        if (!System.IO.File.Exists(path)) return false;
+        System.IO.File.Delete(path);
+        return true;
+    }
+
+    bool LoadFromJson()
+    {
+        string path = Application.persistentDataPath + "/user_data_todo.json";
+        if (!System.IO.File.Exists(path))
+        {
+            todoList = new List<Todo>();
+            return false;
+        }
+        
+        string json = System.IO.File.ReadAllText(path);
+        TodoSerializationWrapper wrapper = JsonUtility.FromJson<TodoSerializationWrapper>(json);
+        
+        if (wrapper != null && wrapper.todoList != null)
+        {
+            todoList = wrapper.todoList;
+        }
+        else
+        {
+            todoList = new List<Todo>();
+        }
+
+        Debug.Log("Loaded Todos:");
+        foreach (Todo todo in todoList)
+        {
+            Debug.Log($"Title: {todo.title}, Completed: {todo.isComplete}");
+        }
+        return true;
+    }
+
+    void CalcTodos()
+    {
+        totalTodos = todoList.Count;
+        totalCompletedTodos = 0;
+        foreach (Todo todo in todoList)
+        {
+            if (todo.isComplete)
+            {
+                totalCompletedTodos++;
+            }
+        }
+    }
+
+    void updateAmountText()
+    {
+        if (amountTextComponent is null)
+        {
+            Debug.LogError("TodoScript: No amount text component selected.");
+            return;
+        }
+        amountTextComponent.text = "Total amount: " + totalCompletedTodos + "/" + totalTodos;
+    }
+
+    void DrawTodo()
+    {
+        if (todoContainer == null)
+        {
+            Debug.LogError("TodoScript: No todo container selected. Cannot draw list.");
+            return;
+        }
+        if (todoEntryPrefab == null)
+        {
+            Debug.LogError("TodoScript: No todo entry prefab selected. Cannot draw list.");
+            return;
+        }
+        // Remove old list
+        foreach (Transform child in todoContainer.transform)
+        {
+            if (child.name == "Todo Amount") continue;
+            Destroy(child.gameObject);
+        }
+        // Draw new list
+        foreach (Todo todo in todoList)
+        {
+            GameObject newTodoObject = Instantiate(todoEntryPrefab, transform.position, Quaternion.identity);
+            newTodoObject.transform.SetParent(todoContainer.transform, false);
+            TodoEntryScript scriptComponent = newTodoObject.GetComponent<TodoEntryScript>();
+            scriptComponent.Setup(todo);
+        }
+    }
+
+    public Todo getTodo(int id)
+    {
+        Todo resultingTodo = todoList.FirstOrDefault(t => t.id == id);
+        if (resultingTodo == null)
+        {
+            Debug.LogWarning("TodoManagerScript: Could not find todo by id " + id);
+            return null;
+        }
+        else
+        {
+            return resultingTodo;
+        }
+    }
+
+    void Refresh()
+    {
+        CalcTodos();
+        updateAmountText();
+        DrawTodo();
+        SelectRightUIColumn();
+    }
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    void Start()
+    {
+        if (debugging == true) DeleteJsonFile();
+        if (!LoadFromJson())
+        {
+            // If no todoList are loaded, initialize with some default todoList
+            AddTodo("Buy groceries");
+            AddTodo("Walk the dog");
+            AddTodo("Finish homework");
+            SaveToJson();
+        }
+        Refresh();
+    }
+
+}
