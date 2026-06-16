@@ -31,6 +31,11 @@ public class TodoEntryScript : MonoBehaviour
     {
         titleHolder.text = todo.title;
         titleInputField.text = todo.title;
+        DrawObjects();
+    }
+
+    void DrawObjects()
+    {
         DrawCheckbox();
         DrawTextOrInput();
     }
@@ -38,8 +43,8 @@ public class TodoEntryScript : MonoBehaviour
     public void UpdateTodo()
     {
         todo.title = titleInputField.text;
+        TodoManagerScript.Instance.Save();
         Refresh();
-        TodoManagerScript.Instance.SaveToJson();
     }
 
     public void HandleDeleteClick()
@@ -49,7 +54,6 @@ public class TodoEntryScript : MonoBehaviour
     }
     public void ToggleComplete()
     {
-        if (TodoManagerScript.Instance.isEditing) return;
         MenuButtonAudio.Instance.PlayClickSound();
         if (todo.isComplete)
         {
@@ -69,6 +73,6 @@ public class TodoEntryScript : MonoBehaviour
 
     void Update()
     {
-        Refresh();
+        DrawObjects();
     }
 }

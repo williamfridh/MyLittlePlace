@@ -15,15 +15,20 @@ public class WorldGeneratorScript : MonoBehaviour
     public TileBase mountainTile;
     public TileBase desertTile;
     public TileBase waterTile;
+    public TileBase gravelTile;
 
-    // Objects to spawn
-    [Header("Object Settings")]
+    // Nature to spawn
+    [Header("Nature Settings")]
     public GameObject treeBirchPrefab;
     public GameObject treeOakPrefab;
     public GameObject treePinePrefab;
     public GameObject cactusPrefab;
     public GameObject rockPrefab;
     public GameObject bushPrefab;
+
+    // Objects to spawn
+    [Header("Objects Settings")]
+    public GameObject campfirePrefab;
 
     // Map generation parameters
     [Header("Generation Parameters")]
@@ -310,6 +315,26 @@ public class WorldGeneratorScript : MonoBehaviour
         }
     }
 
+    void CreateCamp()
+    {
+        // Create gravel biome
+        int shift = 3;
+        for (int x = width/2-1-shift; x < width/2-0+shift; x++)
+        {
+            for (int y = height/2-1-shift; y < height/2-0+shift; y++)
+            {
+                groundTilemap.SetTile(new Vector3Int(x, y, 0), gravelTile);
+                biomeMap[x, y] = BiomeType.Meadow;
+                occupiedMap[x, y] = false;
+            }
+        }
+        // Move player
+        PlayerScript.Instance.transform.position = new Vector3(width/2-1, height/2-1, 0);
+        // Add campfire
+        Instantiate(campfirePrefab, new Vector3(width/2, height/2, 0), Quaternion.identity, spawnedObjectsParent.transform);
+        MarkOccupied(width/2, height/2, 1, 1);
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -343,6 +368,7 @@ public class WorldGeneratorScript : MonoBehaviour
                 SpawnPlant(x, y, biome);
             }
         }
+        CreateCamp();
     }
 
     // Update is called once per frame

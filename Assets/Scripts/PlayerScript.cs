@@ -11,6 +11,11 @@ public class PlayerScript : MonoBehaviour
 
     public Camera playerCamera;
     [SerializeField] private Animator _animator;
+    
+    [Header("Life")]
+    [SerializeField] private int life = 8;
+    [SerializeField] private GameObject lifeCounter;
+    [SerializeField] private GameObject lifeIcon;
 
 
     public float currentHorizontal; // -1 for left, 1 for right, 0 for no horizontal movement
@@ -24,8 +29,7 @@ public class PlayerScript : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void DrawLife()
     {
         
     }

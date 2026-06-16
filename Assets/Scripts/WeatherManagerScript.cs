@@ -39,6 +39,12 @@ public class WeatherManagerScript : MonoBehaviour
     private Color targetColor;
     private float targetIntensity;
 
+    private Color currentDayColor;
+    private Color currentNightColor;
+    private float currentDayIntensity;
+    private float currentNightIntensity;
+
+
     [Header("Blend Settings")]
     [Tooltip("How fast the environment lighting transitions between biomes.")]
     public float blendSpeed = 2.0f;
@@ -102,6 +108,7 @@ public class WeatherManagerScript : MonoBehaviour
         WorldGeneratorScript.BiomeType playerBiome = WorldGeneratorScript.Instance.GetBiomeAtPosition(playerPos);
         // Get time of day ratio
         float timeRatio = TimeManagerScript.Instance.GetTimeNightRatio();
+        //Debug.Log(timeRatio);
 
         if (playerBiome != lastPlayerBiome)
         {
@@ -109,31 +116,54 @@ public class WeatherManagerScript : MonoBehaviour
             Debug.Log("Player entered biome: " + playerBiome.ToString());
         }
 
+        Color targetDayColor = meadowDayColor;
+        Color targetNightColor = meadowDayColor;
+        float targetDayIntensity = meadowDayIntensity;
+        float targetNightIntensity = meadowNightIntensity;
+
         switch(playerBiome)
         {
             case WorldGeneratorScript.BiomeType.Meadow:
-                targetColor = Color.Lerp(meadowDayColor, meadowNightColor, timeRatio);
-                targetIntensity = Mathf.Lerp(meadowDayIntensity, meadowNightIntensity, timeRatio);
+                targetDayColor = meadowDayColor;
+                targetNightColor = meadowNightColor;
+                targetDayIntensity = meadowDayIntensity;
+                targetNightIntensity= meadowNightIntensity;
                 break;
             case WorldGeneratorScript.BiomeType.Forest:
-                targetColor = Color.Lerp(forestDayColor, forestNightColor, timeRatio);
-                targetIntensity = Mathf.Lerp(forestDayIntensity, forestNightIntensity, timeRatio);
+                targetDayColor = forestDayColor;
+                targetNightColor = forestNightColor;
+                targetDayIntensity = forestDayIntensity;
+                targetNightIntensity= forestNightIntensity;
                 break;
             case WorldGeneratorScript.BiomeType.Desert:
-                targetColor = Color.Lerp(desertDayColor, desertNightColor, timeRatio);
-                targetIntensity = Mathf.Lerp(desertDayIntensity, desertNightIntensity, timeRatio);
+                targetDayColor = desertDayColor;
+                targetNightColor = desertNightColor;
+                targetDayIntensity = desertDayIntensity;
+                targetNightIntensity= desertNightIntensity;
                 break;
             case WorldGeneratorScript.BiomeType.Mountain:
-                targetColor = Color.Lerp(mountainDayColor, mountainNightColor, timeRatio);
-                targetIntensity = Mathf.Lerp(mountainDayIntensity, mountainNightIntensity, timeRatio);
+                targetDayColor = mountainDayColor;
+                targetNightColor = mountainNightColor;
+                targetDayIntensity = mountainDayIntensity;
+                targetNightIntensity= mountainNightIntensity;
                 break;
             case WorldGeneratorScript.BiomeType.Water:
-                targetColor = Color.Lerp(waterDayColor, waterNightColor, timeRatio);
-                targetIntensity = Mathf.Lerp(waterDayIntensity, waterNightIntensity, timeRatio);
+                targetDayColor = waterDayColor;
+                targetNightColor = waterNightColor;
+                targetDayIntensity = waterDayIntensity;
+                targetNightIntensity= waterNightIntensity;
                 break;
         }
 
-        globalLight.color = Color.Lerp(globalLight.color, targetColor, Time.deltaTime * blendSpeed);
-        globalLight.intensity = Mathf.Lerp(globalLight.intensity, targetIntensity, Time.deltaTime * blendSpeed);
+        currentDayColor = Color.Lerp(currentDayColor, targetDayColor, Time.deltaTime * blendSpeed);
+        currentNightColor = Color.Lerp(currentNightColor, targetNightColor, Time.deltaTime * blendSpeed);
+        currentDayIntensity = Mathf.Lerp(currentDayIntensity, targetDayIntensity, Time.deltaTime * blendSpeed);
+        currentNightIntensity = Mathf.Lerp(currentNightIntensity, targetNightIntensity, Time.deltaTime * blendSpeed);
+
+        globalLight.color =
+            Color.Lerp(currentDayColor, currentNightColor, timeRatio);
+
+        globalLight.intensity =
+            Mathf.Lerp(currentDayIntensity, currentNightIntensity, timeRatio);
     }
 }

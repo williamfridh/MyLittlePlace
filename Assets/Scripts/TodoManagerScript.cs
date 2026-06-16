@@ -32,7 +32,6 @@ public class TodoManagerScript : MonoBehaviour
     [SerializeField] private GameObject todoEntryPrefab;
     [Header("Settings")]
     [SerializeField] public bool isEditing = false;
-    [SerializeField] bool debugging;
 
     private int totalTodos;
     private int totalCompletedTodos;
@@ -75,7 +74,7 @@ public class TodoManagerScript : MonoBehaviour
         todoList.Add(newTodo);
         totalTodos++;
         // Save and refresh
-        SaveToJson();
+        SaveManagerScript.Instance.UpdateTodoList(todoList);
         Refresh();
     }
 
@@ -86,7 +85,7 @@ public class TodoManagerScript : MonoBehaviour
             todo.isComplete = true;
             totalCompletedTodos++;
         }
-        SaveToJson();
+        SaveManagerScript.Instance.UpdateTodoList(todoList);
         updateAmountText();
         DrawTodo();
     }
@@ -98,7 +97,7 @@ public class TodoManagerScript : MonoBehaviour
             todo.isComplete = false;
             totalCompletedTodos--;
         }
-        SaveToJson();
+        SaveManagerScript.Instance.UpdateTodoList(todoList);
         updateAmountText();
         DrawTodo();
     }
@@ -106,11 +105,13 @@ public class TodoManagerScript : MonoBehaviour
     public void DeleteTodo(Todo todo)
     {
         todoList.Remove(todo);
+        SaveManagerScript.Instance.UpdateTodoList(todoList);
         Refresh();
     }
 
     public void DeleteAllComplete()
     {
+        MenuButtonAudio.Instance.PlayClickSound();
         List<Todo> todosToDelete = new List<Todo>();
         foreach (Todo todo in todoList)
         {
@@ -125,47 +126,11 @@ public class TodoManagerScript : MonoBehaviour
         }
     }
 
-    public void SaveToJson()
-    {
-        TodoSerializationWrapper wrapper = new TodoSerializationWrapper { todoList = todoList };
-        string json = JsonUtility.ToJson(wrapper, true);
-        System.IO.File.WriteAllText(Application.persistentDataPath + "/user_data_todo.json", json);
-    }
-
     bool DeleteJsonFile()
     {
         string path = Application.persistentDataPath + "/todoList.json";
         if (!System.IO.File.Exists(path)) return false;
         System.IO.File.Delete(path);
-        return true;
-    }
-
-    bool LoadFromJson()
-    {
-        string path = Application.persistentDataPath + "/user_data_todo.json";
-        if (!System.IO.File.Exists(path))
-        {
-            todoList = new List<Todo>();
-            return false;
-        }
-        
-        string json = System.IO.File.ReadAllText(path);
-        TodoSerializationWrapper wrapper = JsonUtility.FromJson<TodoSerializationWrapper>(json);
-        
-        if (wrapper != null && wrapper.todoList != null)
-        {
-            todoList = wrapper.todoList;
-        }
-        else
-        {
-            todoList = new List<Todo>();
-        }
-
-        Debug.Log("Loaded Todos:");
-        foreach (Todo todo in todoList)
-        {
-            Debug.Log($"Title: {todo.title}, Completed: {todo.isComplete}");
-        }
         return true;
     }
 
@@ -234,6 +199,10 @@ public class TodoManagerScript : MonoBehaviour
         }
     }
 
+    public void Save()
+    {
+        SaveManagerScript.Instance.UpdateTodoList(todoList);
+    }
     void Refresh()
     {
         CalcTodos();
@@ -250,14 +219,17 @@ public class TodoManagerScript : MonoBehaviour
 
     void Start()
     {
-        if (debugging == true) DeleteJsonFile();
-        if (!LoadFromJson())
+        if (!SaveManagerScript.Instance.Load())
         {
             // If no todoList are loaded, initialize with some default todoList
             AddTodo("Buy groceries");
             AddTodo("Walk the dog");
             AddTodo("Finish homework");
-            SaveToJson();
+            SaveManagerScript.Instance.UpdateTodoList(todoList);
+        }
+        else
+        {
+            todoList = SaveManagerScript.Instance.save.todoList;
         }
         Refresh();
     }

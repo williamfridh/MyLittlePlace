@@ -9,6 +9,17 @@ public class TimeManagerScript : MonoBehaviour
     [Tooltip("How many real-world seconds per in-game minutes")]
     public float inGameSecondsPerRealSecond = 60.0f;
 
+    [Header("Day/Night Lighting Curve")]
+    [Tooltip("X = hour of day, Y = night ratio. 0 is day, 1 is night.")]
+    public AnimationCurve nightRatioCurve = new AnimationCurve(
+        new Keyframe(0f, 1f),
+        new Keyframe(5f, 1f),
+        new Keyframe(7f, 0f),
+        new Keyframe(18f, 0f),
+        new Keyframe(21f, 1f),
+        new Keyframe(24f, 1f)
+    );
+
     [Header("UI Elements")]
     public RectTransform clockHand; // Assign in Inspector: the hand of the clock to rotate
 
@@ -31,7 +42,7 @@ public class TimeManagerScript : MonoBehaviour
     void Start()
     {
         // Initilize time to 12:00
-        totalInGameSeconds = SECONDS_PER_HOUR * 12; // Start at 12:00
+        totalInGameSeconds = SECONDS_PER_HOUR * 6; // Start at 6:00
     }
 
     void Update()
@@ -44,7 +55,7 @@ public class TimeManagerScript : MonoBehaviour
         // Rotate clock hand
         if (clockHand != null)
         {
-            float rotationAngle = (totalInGameSeconds % SECONDS_PER_DAY) / SECONDS_PER_DAY * 360f - 135f; // -135 to start at 12:00 position
+            float rotationAngle = (totalInGameSeconds % SECONDS_PER_DAY) / SECONDS_PER_DAY * 360f - 45f- 90f; // -135 to start at 12:00 position
             clockHand.localRotation = Quaternion.Euler(0, 0, -rotationAngle); // Rotate counter-clockwise
         }
     }
@@ -66,8 +77,12 @@ public class TimeManagerScript : MonoBehaviour
 
     public float GetTimeNightRatio()
     {
-        // Calculate the ratio of the current time to the full day (0.0 at 00:00, 0.5 at 12:00, 1.0 at 24:00)
-        return (totalInGameSeconds % SECONDS_PER_DAY) / SECONDS_PER_DAY;
+        float currentHour =
+            (totalInGameSeconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR;
+        Debug.Log(currentHour);
+        return Mathf.Clamp01(
+            nightRatioCurve.Evaluate(currentHour)
+        );
     }
 
     public string GetFormattedTime()
