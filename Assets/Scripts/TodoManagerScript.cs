@@ -38,12 +38,14 @@ public class TodoManagerScript : MonoBehaviour
 
     public void EnableEditing()
     {
+        MenuButtonAudio.Instance.PlayClickSound();
         isEditing = true;
         SelectRightUIColumn();
 
     }
     public void DisableEditing()
     {
+        MenuButtonAudio.Instance.PlayClickSound();
         isEditing = false;
         SelectRightUIColumn();
     }

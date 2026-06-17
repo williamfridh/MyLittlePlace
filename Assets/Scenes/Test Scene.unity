@@ -206,6 +206,66 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   inGameSecondsPerRealSecond: 60
+  nightRatioCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 7
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 18
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 21
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 24
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   clockHand: {fileID: 0}
 --- !u!4 &299174577
 Transform:
@@ -449,6 +509,9 @@ MonoBehaviour:
   moveSpeed: 2
   playerCamera: {fileID: 519420031}
   _animator: {fileID: 613905133}
+  life: 8
+  lifeCounter: {fileID: 0}
+  lifeIcon: {fileID: 0}
   currentHorizontal: 0
   currentVertical: 0
   isMoving: 0
@@ -654,7 +717,7 @@ MonoBehaviour:
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.04
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 00000000eb3c996625a8d539
@@ -2659,6 +2722,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 56629911482341086, guid: 5d00ed6f0cca0aa4c9775133df498f56, type: 3}
+      propertyPath: lightSource
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4097075514465769906, guid: 5d00ed6f0cca0aa4c9775133df498f56, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6
@@ -2704,7 +2771,8 @@ PrefabInstance:
       value: campfire
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5730312382774623624, guid: 5d00ed6f0cca0aa4c9775133df498f56, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5d00ed6f0cca0aa4c9775133df498f56, type: 3}

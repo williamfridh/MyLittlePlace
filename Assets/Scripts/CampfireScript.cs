@@ -12,6 +12,9 @@ public class CampfireScript : MonoBehaviour
     [Header("Campfire Versions")]
     [SerializeField] private GameObject campfireAlive;
     [SerializeField] private GameObject campfireDead;
+
+    [Header("Light")]
+    [SerializeField] private GameObject lightSource;
     
     [Header("Fuel Economy")]
     [SerializeField] private float burnRatePerGameHour = 1.0f;
@@ -22,6 +25,7 @@ public class CampfireScript : MonoBehaviour
         audioSource.Play();
         campfireAlive.SetActive(true);
         campfireDead.SetActive(false);
+        lightSource.SetActive(true);
     }
 
     public void ExtinguishFire()
@@ -30,6 +34,7 @@ public class CampfireScript : MonoBehaviour
         audioSource.Stop();
         campfireAlive.SetActive(false);
         campfireDead.SetActive(true);
+        lightSource.SetActive(false);
     }
 
     public void AddFuel(float amount)
@@ -60,6 +65,8 @@ public class CampfireScript : MonoBehaviour
         if (fireParticles == null) return;
         if (campfireAlive == null || campfireDead == null) return;
         if (audioSource == null) return;
+        if (lightSource == null) return;
+
         if (fuel > 0)
         {
             float gameSecondsPassed = Time.deltaTime * TimeManagerScript.Instance.inGameSecondsPerRealSecond;

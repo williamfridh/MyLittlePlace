@@ -8,6 +8,7 @@ public class PlayerScript : MonoBehaviour
 
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
+    [SerializeField] private InputActionReference moveActionReference;
 
     public Camera playerCamera;
     [SerializeField] private Animator _animator;
@@ -34,6 +35,16 @@ public class PlayerScript : MonoBehaviour
         
     }
 
+    private void EnableJoystick()
+    {
+        if (moveActionReference != null) moveActionReference.action.Enable();
+    }
+
+    private void DisableJoystick()
+    {
+        if (moveActionReference == null) moveActionReference.action.Disable();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -43,40 +54,42 @@ public class PlayerScript : MonoBehaviour
         // Read movement inputs
         Vector2 moveInput = Vector2.zero;
 
-        if (Keyboard.current != null)
+        if (moveActionReference != null)
         {
-            if (Keyboard.current.leftArrowKey.isPressed)
+            moveInput = moveActionReference.action.ReadValue<Vector2>();
+        }
+
+        if (moveInput.magnitude > 0)
+        {
+            isMoving = true;
+            if (moveInput.x < 0)
             {
-                moveInput.x = -1f;
-                isMoving = true;
                 currentHorizontal = -1f;
-                currentVertical = 0f;
             }
-            else if (Keyboard.current.rightArrowKey.isPressed)
+            else if (moveInput.x > 0)
             {
-                moveInput.x = 1f;
-                isMoving = true;
                 currentHorizontal = 1f;
-                currentVertical = 0f;
-            }
-            else if (Keyboard.current.upArrowKey.isPressed)
-            {
-                moveInput.y = 1f;
-                isMoving = true;
-                currentVertical = 1f;
-                currentHorizontal = 0f;
-            }
-            else if (Keyboard.current.downArrowKey.isPressed)
-            {
-                moveInput.y = -1f;
-                isMoving = true;
-                currentVertical = -1f;
-                currentHorizontal = 0f;
             }
             else
             {
-                isMoving = false;
+                currentHorizontal = 0f;
             }
+            if (moveInput.y < 0)
+            {
+                currentVertical = -1f;
+            }
+            else if (moveInput.y > 0)
+            {
+                currentVertical = 1f;
+            }
+            else
+            {
+                currentVertical = 0f;
+            }
+        }
+        else
+        {
+            isMoving = false;
         }
 
         // Apply the translation
