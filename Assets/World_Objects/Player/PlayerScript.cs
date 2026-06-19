@@ -27,8 +27,8 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] AudioSource jumpAudio;
 
 
-    public float currentHorizontal; // -1 for left, 1 for right, 0 for no horizontal movement
-    public float currentVertical;   // -1 for down, 1 for up, 0
+    public float currentHorizontal = 0; // -1 for left, 1 for right, 0 for no horizontal movement
+    public float currentVertical = -1;   // -1 for down, 1 for up, 0
     public bool isMoving;
     private bool jumpRequested = false;
 
@@ -42,6 +42,11 @@ public class PlayerScript : MonoBehaviour
         // Setup layers
         defaultLayer = LayerMask.NameToLayer("Player");
         jumpingLayer = LayerMask.NameToLayer("JumpingPlayer");
+        // Set animation paramaters
+        _animator.SetFloat("Horizontal", 0f);
+        _animator.SetFloat("Vertical", -1f);
+        _animator.SetBool("isMoving", false);
+        _animator.SetBool("isJumping", false);
     }
 
     private void EnableJoystick()

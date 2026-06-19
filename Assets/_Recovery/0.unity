@@ -1791,7 +1791,6 @@ MonoBehaviour:
   width: 100
   height: 100
   spawnedObjectsParent: {fileID: 429611333}
-  startingCampRadius: 3
 --- !u!4 &1842151125
 Transform:
   m_ObjectHideFlags: 0
@@ -2743,10 +2742,6 @@ PrefabInstance:
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 519420031}
-    - target: {fileID: 1011864494737688886, guid: 70b6b5af769138143aea79912d606437, type: 3}
-      propertyPath: currentVertical
-      value: -1
-      objectReference: {fileID: 0}
     - target: {fileID: 1011864494737688886, guid: 70b6b5af769138143aea79912d606437, type: 3}
       propertyPath: visualJumpHeight
       value: 1

@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections;
+using System.Collections.Generic;
 
 public class WorldGeneratorScript : MonoBehaviour
 {
@@ -45,6 +47,9 @@ public class WorldGeneratorScript : MonoBehaviour
     public int width = 100;
     public int height = 100;
     public GameObject spawnedObjectsParent;
+
+    [Header("Starting Camp")]
+    [SerializeField] private int startingCampRadius = 3;
 
     // Preset types
     public enum BiomeType
@@ -320,24 +325,61 @@ public class WorldGeneratorScript : MonoBehaviour
         }
     }
 
-    void CreateCamp()
+    /// <summary>
+    /// Used for fetching a list of coordinates shaping a circle. Intended to be
+    /// reused, created for CreateCamp function.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="radius"></param>
+    List<Vector2> GetCircleCoordinates(float x, float y, int radius)
     {
-        // Create gravel biome
-        int shift = 3;
-        for (int x = width/2-1-shift; x < width/2-0+shift; x++)
+        List<Vector2> coordinateList = new List<Vector2>();
+        
+        int startX = Mathf.FloorToInt(x - radius);
+        int endX = Mathf.FloorToInt(x + radius);
+        int startY = Mathf.FloorToInt(y - radius);
+        int endY = Mathf.FloorToInt(y + radius);
+        
+        for (float xx = startX; xx <= endX; xx++)
         {
-            for (int y = height/2-1-shift; y < height/2-0+shift; y++)
+            for (float yy = startY; yy <= endY; yy++)
             {
-                groundTilemap.SetTile(new Vector3Int(x, y, 0), gravelTile);
-                biomeMap[x, y] = BiomeType.Meadow;
-                occupiedMap[x, y] = false;
+                float dx = (xx + 0.5f) - (x + 0.5f);
+                float dy = (yy + 0.5f) - (y + 0.5f);
+                if ((dx * dx) + (dy * dy) <= radius * radius)
+                {
+                    coordinateList.Add(new Vector2(xx, yy));
+                }
             }
         }
+        return coordinateList;
+    }
+
+    void CreateCamp(int radius = 3)
+    {
+        int x_center = width / 2 - 1;
+        int y_center = height / 2 - 1;
+        List<Vector2> campCoordinates = GetCircleCoordinates(x_center, y_center, radius);
+        // Create biome
+        foreach (Vector2 coordinates in campCoordinates)
+        {
+            int cx = (int)coordinates.x;
+            int cy = (int)coordinates.y;
+            groundTilemap.SetTile(new Vector3Int(cx, cy, 0), gravelTile);
+            SetBiomeType(cx, cy, BiomeType.Meadow);
+            MarkOccupied(cx, cy, 1, 1);
+        }
         // Move player
-        PlayerScript.Instance.transform.position = new Vector3(width/2-1, height/2-1, 0);
+        PlayerScript.Instance.transform.position = new Vector3(x_center-2, y_center, 0);
         // Add campfire
-        Instantiate(campfirePrefab, new Vector3(width/2, height/2, 0), Quaternion.identity, spawnedObjectsParent.transform);
-        MarkOccupied(width/2, height/2, 1, 1);
+        Instantiate(campfirePrefab, new Vector3(x_center, y_center, 0), Quaternion.identity, spawnedObjectsParent.transform);
+    }
+
+    void SetBiomeType(int x, int y, BiomeType biomeType)
+    {
+        if (x == null || y == null || biomeType == null) return;
+        biomeMap[x, y] = biomeType;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -373,7 +415,7 @@ public class WorldGeneratorScript : MonoBehaviour
                 SpawnPlant(x, y, biome);
             }
         }
-        CreateCamp();
+        CreateCamp(startingCampRadius);
     }
 
     // Update is called once per frame
