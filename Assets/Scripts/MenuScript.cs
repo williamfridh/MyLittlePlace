@@ -11,19 +11,12 @@ public class MenuScript : MonoBehaviour
     [SerializeField] private CanvasGroup hudPanel;
     [SerializeField] private CanvasGroup addTodoMenuPanel;
 
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-
-        Close();
-    }
-
     public void ShowTodoMenu()
     {
         CloseAll();
         MenuButtonAudio.Instance.PlayClickSound();
         ShowPanel(todoMenuPanel);
+        WorldStateScript.Instance.SetPaused(true);
     }
 
     public void ShowAddTodoMenu()
@@ -31,6 +24,7 @@ public class MenuScript : MonoBehaviour
         CloseAll();
         MenuButtonAudio.Instance.PlayClickSound();
         ShowPanel(addTodoMenuPanel);
+        WorldStateScript.Instance.SetPaused(true);
     }
 
     public void ShowSettingsMenu()
@@ -38,6 +32,7 @@ public class MenuScript : MonoBehaviour
         CloseAll();
         MenuButtonAudio.Instance.PlayClickSound();
         ShowPanel(settingsMenuPanel);
+        WorldStateScript.Instance.SetPaused(true);
     }
     public void Close()
     {
@@ -46,6 +41,7 @@ public class MenuScript : MonoBehaviour
         HidePanel(todoMenuPanel);
         HidePanel(settingsMenuPanel);
         HidePanel(addTodoMenuPanel);
+        WorldStateScript.Instance.SetPaused(false);
     }
     public void CloseAll()
     {
@@ -71,5 +67,16 @@ public class MenuScript : MonoBehaviour
         panel.alpha = 0f;               // Make instance invisible
         panel.interactable = false;     // Disable interaction with instance
         panel.blocksRaycasts = false;   // Prevent instance from receiving raycasts
+    }
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
+        ShowPanel(hudPanel);
+        HidePanel(todoMenuPanel);
+        HidePanel(settingsMenuPanel);
+        HidePanel(addTodoMenuPanel);
     }
 }

@@ -11,6 +11,7 @@ public class TodoEntryScript : MonoBehaviour
     [SerializeField] private Image deleteButton;
     [SerializeField] private TextMeshProUGUI titleHolder;
     [SerializeField] private TMP_InputField titleInputField;
+    [SerializeField] private GameObject titleStroke;
     public TodoManagerScript.Todo todo;
 
     void DrawCheckbox()
@@ -27,6 +28,8 @@ public class TodoEntryScript : MonoBehaviour
         deleteButton.gameObject.SetActive(isEditing);
     }
 
+    void DrawTitleStroke() => titleStroke.SetActive(todo.isComplete);
+
     void Refresh()
     {
         titleHolder.text = todo.title;
@@ -38,6 +41,7 @@ public class TodoEntryScript : MonoBehaviour
     {
         DrawCheckbox();
         DrawTextOrInput();
+        DrawTitleStroke();
     }
 
     public void UpdateTodo()

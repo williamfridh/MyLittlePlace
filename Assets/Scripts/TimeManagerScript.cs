@@ -79,7 +79,7 @@ public class TimeManagerScript : MonoBehaviour
     {
         float currentHour =
             (totalInGameSeconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR;
-        Debug.Log(currentHour);
+        //Debug.Log(currentHour);
         return Mathf.Clamp01(
             nightRatioCurve.Evaluate(currentHour)
         );

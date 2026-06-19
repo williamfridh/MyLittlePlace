@@ -25,6 +25,7 @@ public class WorldGeneratorScript : MonoBehaviour
     public GameObject cactusPrefab;
     public GameObject rockPrefab;
     public GameObject bushPrefab;
+    public GameObject grassPrefab;
 
     // Objects to spawn
     [Header("Objects Settings")]
@@ -188,8 +189,12 @@ public class WorldGeneratorScript : MonoBehaviour
         switch (biome)
         {
             case BiomeType.Meadow:
-                if (spawnChange < 0.5f) {
+                if (spawnChange < 0.2f) {
                     break;
+                } else if (spawnChange >= 0.2f && spawnChange < 0.5f && CanFitSize(x, y, 1, 1))
+                {
+                    Instantiate(grassPrefab, new Vector3(x + 0.5f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
+                    MarkOccupied(x, y, 1, 1);
                 } else if (spawnChange > 0.5f && spawnChange < 0.8f && CanFitSize(x, y, 1, 2)) {
                     Instantiate(treeBirchPrefab, new Vector3(x + 0.5f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
                     MarkOccupied(x, y, 1, 2);
