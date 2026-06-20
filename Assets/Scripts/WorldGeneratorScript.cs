@@ -51,22 +51,46 @@ public class WorldGeneratorScript : MonoBehaviour
     [Header("Starting Camp")]
     [SerializeField] private int startingCampRadius = 3;
 
+    // The world save state is handled as a separate class,
+    // this is important for convertion to JSON.
+    // Keep this simple, as logic should remain mostly in
+    // the outer script.
+    [System.Serializable]
+    public class WorldSaveState
+    {
+        public int width;
+        public int height;
+        public WorldCell[] cellGrid; // Flattened 2D array
+    }
+    [System.Serializable]
+    public class WorldCell
+    {
+        public int biomeType; // Biome type represented using int
+        public string objectId; // String such as "rock" or "birch"
+        public float temperature;
+        public float moisture;
+        public float elevation;
+        public float nutrition;
+    }
+
     // Preset types
+    // Meadow = 1, Forest = 2, Mountain = 3, Desert = 4
     public enum BiomeType
     {
-        Forest,
-        Meadow,
-        Mountain,
-        Desert,
-        Water
+        Meadow = 0,
+        Forest = 1,
+        Mountain = 2,
+        Desert = 3,
+        Water = 4
     }
     private enum BiomeSelectionScale
     {
-        Low,
-        Medium,
-        High
+        Low = 1,
+        Medium = 2,
+        High = 3
     }
 
+    bool[,] mapInitilized;
     BiomeType[,] biomeMap;
     bool[,] occupiedMap;
     float[,] temperatureMap;
@@ -230,13 +254,22 @@ public class WorldGeneratorScript : MonoBehaviour
         }
     }
 
-    void Awake()
+    void Generate()
     {
-        // Singleton pattern to ensure only one instance of WorldGeneratorScript exists
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        // Initilize a new world.
+        WorldSaveState world = new WorldSaveState();
+        world.width = width;
+        world.height = height;
 
-        // Preapre offsets
+        // Prepare arrays to hold data for serialization,
+        // keep it simple as this is what will have to be
+        // saved and used for loading/building the world.
+        bool[width, height] mapInitilized = false; // Will not be stored
+        int[width, height] groundBiome = 0;
+        int[width, height] WaterBiome = 0;
+        int[width, height] ClifBiome = 0;
+        
+        // Prepare offsets
         temperatureOffsetX = Random.Range(0f, 10000f);
         temperatureOffsetY = Random.Range(0f, 10000f);
         moistureOffsetX = Random.Range(0f, 10000f);
@@ -246,6 +279,106 @@ public class WorldGeneratorScript : MonoBehaviour
         nutrientOffsetX = Random.Range(0f, 10000f);
         nutrientOffsetY = Random.Range(0f, 10000f);
 
+        // Then initilize the maps for temperature, moisture, elevation and nutrition.
+        // Note that these arrays will also be saved and reused.
+        temperatureMap = new float[width, height];
+        moistureMap = new float[width, height];
+        elevationMap = new float[width, height];
+        nutrientMap = new float[width, height];
+
+        // Loop through the tiles (x and y) coordinates
+        // and assign values to the arrays.
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                // Get temperature and moisture values from Perlin noise,
+                // then uses these values to 
+                float temperature = Mathf.PerlinNoise(
+                    (x + temperatureOffsetX) * noiseScale,
+                    (y + temperatureOffsetY) * noiseScale
+                    );
+                float moisture = Mathf.PerlinNoise(
+                    (x + moistureOffsetX) * noiseScale,
+                    (y + moistureOffsetY) * noiseScale
+                    );
+                temperatureMap[x, y] = temperature;
+                moistureMap[x, y] = moisture;
+                elevationMap[x, y] = Mathf.PerlinNoise(
+                    (x + elevationOffsetX) * noiseScale,
+                    (y + elevationOffsetY) * noiseScale
+                    );
+                nutrientMap[x, y] = Mathf.PerlinNoise(
+                    (x + nutrientOffsetX) * noiseScale,
+                    (y + nutrientOffsetY) * noiseScale
+                    );
+                // Convert temperature and moisture to biome selection scale.
+                valueToScale(temperature, out BiomeSelectionScale tempScale);
+                valueToScale(moisture, out BiomeSelectionScale moistScale);
+                // Sleect biome type depending on temperature and moisture.
+                int ground = groundTilemap[x, y];
+                int water = waterTilemap[x, y];
+                int clif = clifTilemap[x, y];
+                // Meadow = 1, Forest = 2, Mountain = 3, Desert = 4
+                if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.Low)
+                {
+                    ground = 3;
+                }
+                else if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.Medium)
+                {
+                    ground = 3;
+                }
+                else if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.High)
+                {
+                    ground = 3;
+                }
+                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.Low)
+                {
+                    ground = 4;
+                }
+                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.Medium)
+                {
+                    ground = 1;
+                }
+                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.High)
+                {
+                    ground = 2;
+                }
+                else if (tempScale == BiomeSelectionScale.High && moistScale == BiomeSelectionScale.Low)
+                {
+                    ground = 4;
+                }
+                else if (tempScale == BiomeSelectionScale.High && moistScale == BiomeSelectionScale.Medium)
+                {
+                    water = 1;
+                }
+
+                // Add objects and/or prop
+
+
+                // Mark as initlized
+                mapInitilized[x, y] = true;
+            }
+        }
+
+    void Awake()
+    {
+        // Singleton pattern to ensure only one instance of WorldGeneratorScript exists
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
+        // Prepare offsets
+        temperatureOffsetX = Random.Range(0f, 10000f);
+        temperatureOffsetY = Random.Range(0f, 10000f);
+        moistureOffsetX = Random.Range(0f, 10000f);
+        moistureOffsetY = Random.Range(0f, 10000f);
+        elevationOffsetX = Random.Range(0f, 10000f);
+        elevationOffsetY = Random.Range(0f, 10000f);
+        nutrientOffsetX = Random.Range(0f, 10000f);
+        nutrientOffsetY = Random.Range(0f, 10000f);
+
+        mapInitilized = new bool[width, height];
+
         biomeMap = new BiomeType[width, height];
         // Initilize occupied map to track which tiles are populated
         // and set the default value to false (not occupied)
@@ -253,6 +386,7 @@ public class WorldGeneratorScript : MonoBehaviour
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 occupiedMap[x, y] = false;
+                mapInitilized[x, y] = false;
             }
         }
         // Then initilize the maps for temperature, moisture, elevation and nutrition
@@ -369,6 +503,7 @@ public class WorldGeneratorScript : MonoBehaviour
             groundTilemap.SetTile(new Vector3Int(cx, cy, 0), gravelTile);
             SetBiomeType(cx, cy, BiomeType.Meadow);
             MarkOccupied(cx, cy, 1, 1);
+            mapInitilized[cx, cy] = true;
         }
         // Move player
         PlayerScript.Instance.transform.position = new Vector3(x_center-2, y_center, 0);
@@ -386,11 +521,13 @@ public class WorldGeneratorScript : MonoBehaviour
     void Start()
     {
         AddRockMapBorder();
+        CreateCamp(startingCampRadius);
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 BiomeType biome = biomeMap[x, y];
+                if (mapInitilized[x, y]) continue; // Already spawned area
                 // Set tile
                 switch (biome)
                 {
@@ -413,9 +550,9 @@ public class WorldGeneratorScript : MonoBehaviour
                 // Spawn objects based on biome
                 SpawnRock(x, y, biome);
                 SpawnPlant(x, y, biome);
+                mapInitilized[x, y] = true;
             }
         }
-        CreateCamp(startingCampRadius);
     }
 
     // Update is called once per frame
