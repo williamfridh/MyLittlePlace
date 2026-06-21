@@ -11,7 +11,7 @@ public class AmbienceAudioManager : MonoBehaviour
     [System.Serializable]
     public class BiomeAudioTrack
     {
-        public WorldGeneratorScript.BiomeType biomeType;
+        public BiomeType biomeType;
         public AudioSource audioSource;
         [Range(0f, 1f)] public float maxVolume = 1f;
     }
@@ -50,7 +50,7 @@ public class AmbienceAudioManager : MonoBehaviour
         }
     }
 
-    public void TransitionToBiome(WorldGeneratorScript.BiomeType biomeType)
+    public void TransitionToBiome(BiomeType biomeType)
     {
         BiomeAudioTrack targetTrack = biomeTracks.Find(t => t.biomeType.Equals(biomeType));
         if (targetTrack == null || targetTrack == currentActiveTrack) return;

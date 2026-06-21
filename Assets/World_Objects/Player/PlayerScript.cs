@@ -32,7 +32,7 @@ public class PlayerScript : MonoBehaviour
     public bool isMoving;
     private bool jumpRequested = false;
 
-    private WorldGeneratorScript.BiomeType currentBiomeType;
+    private BiomeType currentBiomeType;
 
     void Awake()
     {
@@ -126,7 +126,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         // Update current biome type
-        WorldGeneratorScript.BiomeType targetBiomeType = WorldGeneratorScript.Instance.GetBiomeAtPosition(transform.position);
+        BiomeType targetBiomeType = WorldGeneratorScript.Instance.GetBiomeAtPosition(transform.position);
         if (currentBiomeType != targetBiomeType)
         {
             currentBiomeType = targetBiomeType;
