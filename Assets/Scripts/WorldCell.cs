@@ -2,11 +2,12 @@ using UnityEngine;
 
 public enum BiomeType
 {
-    Meadow = 1,
-    Forest = 2,
-    Mountain = 3,
-    Desert = 4,
-    Water = 5
+    Camp = 1,
+    Meadow = 2,
+    Forest = 3,
+    Mountain = 4,
+    Desert = 5,
+    Water = 6
 }
 
 public enum BiomeSelectionScale
@@ -26,4 +27,13 @@ public class WorldCell
     public BiomeSelectionScale moisture;
     public float elevation;
     public float nutrition;
+    public bool occupied = false;
+
+    public bool AssignObject(string id, bool forceAdd = false)
+    {
+        if (occupied && !forceAdd) return false;
+        objectId = id;
+        occupied = true;
+        return true;
+    }
 }

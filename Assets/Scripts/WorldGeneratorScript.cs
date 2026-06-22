@@ -8,7 +8,13 @@ public class WorldGeneratorScript : MonoBehaviour
     // Singleton
     public static WorldGeneratorScript Instance { get; set; }
 
-    private void ValueToScale(float value, out BiomeSelectionScale scale)
+    /// <summary>
+    /// Used for converting numbers to descriptive buckets for easier
+    /// biome selection and interpretation.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="scale"></param>
+    private void CategorizeFloat(float value, out BiomeSelectionScale scale)
     {
         if (value < 0.33f)
         {
@@ -24,25 +30,10 @@ public class WorldGeneratorScript : MonoBehaviour
         }
     }
 
-    private bool CanFitSize(int x, int y, int sizeX, int sizeY)
-    {
-        for (int i = 0; i < sizeX; i++) {
-            for (int j = 0; j < sizeY; j++) {
-                // Catch index out of bounds
-                if (x + i >= width || y + j >= height) return false;
-                // Check if if specific offset tile is water
-                if (biomeMap[x + i, y + j] == BiomeType.Water) return false;
-                // Check if tile is occupied
-                if (occupiedMap[x + i, y + j]) return false;
-            }
-        }
-        return true; // All tiles are within bounds and not occupied
-    }
-
-    WorldSaveState GenerateWorld(int w, int h, float noise, int campRad)
+    public WorldSaveState GenerateWorld(int width, int height, float noise, int campRadius)
     {
         // Initilize a new world.
-        WorldSaveState newWorld = new WorldSaveState(w, h, noise, campRad);
+        WorldSaveState newWorld = new WorldSaveState(width, height, noise, campRadius);
 
         // Loop through the tiles (x and y) coordinates
         // and assign temperature, moisture, elevation,
@@ -52,31 +43,30 @@ public class WorldGeneratorScript : MonoBehaviour
             for (int y = 0; y < height; y++)
             {
 
-                WorldCell cell = newWorld.GetCell(x, y);
+                WorldCell cell = new WorldCell();
+                newWorld.cellGrid.Add(cell);
 
                 // Get temperature, moisture, elevation, and nutrition
                 float temperature = Mathf.PerlinNoise(
-                    (x + temperatureOffsetX) * noiseScale,
-                    (y + temperatureOffsetY) * noiseScale
+                    (x + newWorld.temperatureOffsetX) * newWorld.noiseScale,
+                    (y + newWorld.temperatureOffsetY) * newWorld.noiseScale
                     );
                 float moisture = Mathf.PerlinNoise(
-                    (x + moistureOffsetX) * noiseScale,
-                    (y + moistureOffsetY) * noiseScale
+                    (x + newWorld.moistureOffsetX) * newWorld.noiseScale,
+                    (y + newWorld.moistureOffsetY) * newWorld.noiseScale
                     );
-                temperatureMap[x, y] = temperature;
-                moistureMap[x, y] = moisture;
                 cell.elevation = Mathf.PerlinNoise(
-                    (x + elevationOffsetX) * noiseScale,
-                    (y + elevationOffsetY) * noiseScale
+                    (x + newWorld.elevationOffsetX) * newWorld.noiseScale,
+                    (y + newWorld.elevationOffsetY) * newWorld.noiseScale
                     );
                 cell.nutrition = Mathf.PerlinNoise(
-                    (x + nutrientOffsetX) * noiseScale,
-                    (y + nutrientOffsetY) * noiseScale
+                    (x + newWorld.nutrientOffsetX) * newWorld.noiseScale,
+                    (y + newWorld.nutrientOffsetY) * newWorld.noiseScale
                     );
 
                 // Convert temperature and moisture to biome selection scale.
-                ValueToScale(temperature, out BiomeSelectionScale tempScale);
-                ValueToScale(moisture, out BiomeSelectionScale moistScale);
+                CategorizeFloat(temperature, out BiomeSelectionScale tempScale);
+                CategorizeFloat(moisture, out BiomeSelectionScale moistScale);
                 cell.temperature     = tempScale;
                 cell.moisture        = moistScale;
 
@@ -119,91 +109,59 @@ public class WorldGeneratorScript : MonoBehaviour
                     b = BiomeType.Water; // Default biome
                 }
             }
-
-            return newWorld;
         }
+        Debug.Log("WorldGeneratorScript: Generated biomes");
         
         // Add map rock border.
         // Top and bottom borders
         for (int x = 0; x < width; x++)
         {
-            WorldCell topCell = world.GetCell(x, 0);
-            WorldCell bottomCell = world.GetCell(x, height-1);
-            if (topCell.biomeType != BiomeType.Water) topCell.objectId = "rock_1x1_0";
-            if (bottomCell.biomeType != BiomeType.Water) bottomCell.objectId = "rock_1x1_0";
+            WorldCell topCell = newWorld.GetCell(x, 0);
+            WorldCell bottomCell = newWorld.GetCell(x, height-1);
+            if (topCell.biomeType != BiomeType.Water) topCell.AssignObject("rock_1x1_0");
+            if (bottomCell.biomeType != BiomeType.Water) bottomCell.AssignObject("rock_1x1_0");
         }
         // Left and right borders
         for (int y = 1; y < height - 1; y++)
         {
-            WorldCell leftCell = world.GetCell(0, y);
-            WorldCell rightCell = world.GetCell(width-1, y);
-            if (leftCell.biomeType != BiomeType.Water) leftCell.objectId = "rock_1x1_0";
-            if (rightCell.biomeType != BiomeType.Water) rightCell.objectId = "rock_1x1_0";
+            WorldCell leftCell = newWorld.GetCell(0, y);
+            WorldCell rightCell = newWorld.GetCell(width-1, y);
+            if (leftCell.biomeType != BiomeType.Water) leftCell.AssignObject("rock_1x1_0");
+            if (rightCell.biomeType != BiomeType.Water) rightCell.AssignObject("rock_1x1_0");
         }
+        Debug.Log("WorldGeneratorScript: Added map borders");
 
-        world = newWorld;
-    }
-
-    /// <summary>
-    /// Used for fetching a list of coordinates shaping a circle. Intended to be
-    /// reused, created for CreateCamp function.
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="radius"></param>
-    List<Vector2> GetCircleCoordinates(float x, float y, int radius)
-    {
-        List<Vector2> coordinateList = new List<Vector2>();
-        
-        int startX = Mathf.FloorToInt(x - radius);
-        int endX = Mathf.FloorToInt(x + radius);
-        int startY = Mathf.FloorToInt(y - radius);
-        int endY = Mathf.FloorToInt(y + radius);
-        
-        for (float xx = startX; xx <= endX; xx++)
-        {
-            for (float yy = startY; yy <= endY; yy++)
-            {
-                float dx = (xx + 0.5f) - (x + 0.5f);
-                float dy = (yy + 0.5f) - (y + 0.5f);
-                if ((dx * dx) + (dy * dy) <= radius * radius)
-                {
-                    coordinateList.Add(new Vector2(xx, yy));
-                }
-            }
-        }
-        return coordinateList;
-    }
-
-/*     void CreateCamp(int radius = 3)
-    {
+        // Create camp
         int x_center = width / 2 - 1;
         int y_center = height / 2 - 1;
-        List<Vector2> campCoordinates = GetCircleCoordinates(x_center, y_center, radius);
+        List<Vector2> campCoordinates = newWorld.GetCircleCoordinates(x_center, y_center, campRadius);
         // Create biome
         foreach (Vector2 coordinates in campCoordinates)
         {
             int cx = (int)coordinates.x;
             int cy = (int)coordinates.y;
-            groundTilemap.SetTile(new Vector3Int(cx, cy, 0), gravelTile);
-            SetBiomeType(cx, cy, BiomeType.Meadow);
-            MarkOccupied(cx, cy, 1, 1);
-            mapInitilized[cx, cy] = true;
+            WorldCell cell = newWorld.GetCell(cx, cy);
+            cell.biomeType = BiomeType.Camp;
+            cell.occupied = true;
         }
-        // Move player
-        PlayerScript.Instance.transform.position = new Vector3(x_center-2, y_center, 0);
         // Add campfire
-        Instantiate(campfirePrefab, new Vector3(x_center, y_center, 0), Quaternion.identity, spawnedObjectsParent.transform);
-    } */
+        WorldCell campFireCell = newWorld.GetCell(x_center, y_center);
+        campFireCell.AssignObject("campfire");
+        Debug.Log("WorldGeneratorScript: Added camp");
 
-    void SetBiomeType(int x, int y, BiomeType biomeType)
-    {
-        if (x == null || y == null || biomeType == null) return;
-        biomeMap[x, y] = biomeType;
+        return newWorld;
     }
 
-    void Start()
+    void Awake()
     {
-        GenerateWorld();
+        if (Instance == null)
+        {
+            Instance = this;
+            // Optional: DontDestroyOnLoad(gameObject); if you want it to persist across scenes
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

@@ -5275,6 +5275,7 @@ GameObject:
   - component: {fileID: 56629911482341086}
   - component: {fileID: 1130149473301108226}
   - component: {fileID: 6355290442446518509}
+  - component: {fileID: 6926713289199131284}
   m_Layer: 0
   m_Name: campfire
   m_TagString: Untagged
@@ -5376,6 +5377,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::YSortSprite
   precision: 100
   sortingOffset: 0
+  useParentTransform: 0
 --- !u!114 &56629911482341086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5538,6 +5540,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &6926713289199131284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7829531000446244119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e6ef0cf934c83f45bfb8fea6d2a0c4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldObjectIdentity
+  uniqueObjectID: campfire
 --- !u!1001 &4124645749707158783
 PrefabInstance:
   m_ObjectHideFlags: 0

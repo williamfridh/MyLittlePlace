@@ -702,7 +702,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &642533231
+--- !u!1 &886113940
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -710,39 +710,47 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 642533233}
-  - component: {fileID: 642533232}
+  - component: {fileID: 886113942}
+  - component: {fileID: 886113941}
   m_Layer: 0
-  m_Name: Save Manager
+  m_Name: WorldLoaderScript
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &642533232
+--- !u!114 &886113941
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 642533231}
+  m_GameObject: {fileID: 886113940}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28a1aae3ac050ac438d0e9c18e032be2, type: 3}
+  m_Script: {fileID: 11500000, guid: 6fb274409c2325e46bcbce828a34ce2e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
-  save:
-    todoList: []
---- !u!4 &642533233
+  m_EditorClassIdentifier: Assembly-CSharp::WorldLoaderScript
+  groundTilemap: {fileID: 1649904902}
+  waterTilemap: {fileID: 1161746583}
+  forestTile: {fileID: 11400000, guid: ec9b300cfa2c68449a331e1c34132c58, type: 2}
+  meadowTile: {fileID: 11400000, guid: 2a4b6c8c07e1f4648a4d08c81f10d9d3, type: 2}
+  mountainTile: {fileID: 11400000, guid: 8b9e7239a5b914446864a35510d3ab04, type: 2}
+  desertTile: {fileID: 11400000, guid: 55ae78d6ace0ca24192c581da4700ec3, type: 2}
+  waterTile: {fileID: 11400000, guid: f8314dca6aaaf0f47a8976df6584c00a, type: 2}
+  gravelTile: {fileID: 11400000, guid: 58adc304d627fa04a981ff4146dab36e, type: 2}
+  spawnablePrefabs:
+  - {fileID: 7829531000446244119, guid: 5d00ed6f0cca0aa4c9775133df498f56, type: 3}
+--- !u!4 &886113942
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 642533231}
+  m_GameObject: {fileID: 886113940}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 209.96132, y: 231.89085, z: 0}
+  m_LocalPosition: {x: 5.26445, y: 0.45538, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -889,7 +897,7 @@ GameObject:
   - component: {fileID: 1161746583}
   - component: {fileID: 1161746582}
   m_Layer: 10
-  m_Name: Passable Tilemap
+  m_Name: Ground Tilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1339,7 +1347,7 @@ GameObject:
   - component: {fileID: 1649904899}
   - component: {fileID: 1649904898}
   m_Layer: 10
-  m_Name: Impassable Tilemap
+  m_Name: Water Tilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1771,27 +1779,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd39769012ec7747a63815b3a69d0ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BiomeEngineScript
-  groundTilemap: {fileID: 1161746583}
-  waterTilemap: {fileID: 1649904902}
-  forestTile: {fileID: 11400000, guid: ec9b300cfa2c68449a331e1c34132c58, type: 2}
-  meadowTile: {fileID: 11400000, guid: 2a4b6c8c07e1f4648a4d08c81f10d9d3, type: 2}
-  mountainTile: {fileID: 11400000, guid: 8b9e7239a5b914446864a35510d3ab04, type: 2}
-  desertTile: {fileID: 11400000, guid: 55ae78d6ace0ca24192c581da4700ec3, type: 2}
-  waterTile: {fileID: 11400000, guid: f8314dca6aaaf0f47a8976df6584c00a, type: 2}
-  gravelTile: {fileID: 11400000, guid: 58adc304d627fa04a981ff4146dab36e, type: 2}
-  treeBirchPrefab: {fileID: 8558546297532487101, guid: b8cf4de1d1e052a43afaff190cd2f1ce, type: 3}
-  treeOakPrefab: {fileID: 8558546297532487101, guid: 1ae45bed449f7714abeffa0f06659ddc, type: 3}
-  treePinePrefab: {fileID: 8558546297532487101, guid: 48ece2ad633a90a48ad66499b8a948a2, type: 3}
-  cactusPrefab: {fileID: 0}
-  rockPrefab: {fileID: 8782792672095233301, guid: 4616474c10208cc34921d53d9f03eb18, type: 3}
-  bushPrefab: {fileID: 2849254976319771081, guid: 6a638b7a2bf0d6264be3aace859d9b8b, type: 3}
-  grassPrefab: {fileID: 681431577710142292, guid: 89c72212acead01419b3b613334e5df2, type: 3}
-  campfirePrefab: {fileID: 7829531000446244119, guid: 5d00ed6f0cca0aa4c9775133df498f56, type: 3}
-  noiseScale: 0.01
-  width: 100
-  height: 100
-  spawnedObjectsParent: {fileID: 429611333}
-  startingCampRadius: 3
 --- !u!4 &1842151125
 Transform:
   m_ObjectHideFlags: 0
@@ -2839,5 +2826,5 @@ SceneRoots:
   - {fileID: 2221066872661238162}
   - {fileID: 1576537095}
   - {fileID: 512012779}
-  - {fileID: 642533233}
   - {fileID: 262997054}
+  - {fileID: 886113942}

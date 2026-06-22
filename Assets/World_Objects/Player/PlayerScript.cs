@@ -126,7 +126,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         // Update current biome type
-        BiomeType targetBiomeType = WorldGeneratorScript.Instance.GetBiomeAtPosition(transform.position);
+        BiomeType targetBiomeType = SaveManagerScript.Instance.save.world.GetBiomeAtPosition(transform.position);
         if (currentBiomeType != targetBiomeType)
         {
             currentBiomeType = targetBiomeType;

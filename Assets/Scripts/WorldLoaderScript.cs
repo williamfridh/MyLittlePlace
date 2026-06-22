@@ -22,30 +22,7 @@ public class WorldLoaderScript : MonoBehaviour
     [SerializeField] private List<GameObject> spawnablePrefabs;
     private Dictionary<string, GameObject> prefabLookupTable;
 
-    /// <summary>
-    /// Get the biome typa at target position. Used by functions in other
-    /// classes/objects.
-    /// </summary>
-    /// <param name="position"></param>
-    /// <returns></returns>
-    /// <exception cref="System.IndexOutOfRangeException"></exception>
-    public BiomeType GetBiomeAtPosition(Vector3 position)
-    {
-        int x = Mathf.FloorToInt(position.x);
-        int y = Mathf.FloorToInt(position.y);
-
-        if (x >= 0 && x < width && y >= 0 && y < height)
-        {
-            WorldCell cell = world.GetCell(x, y);
-            return cell.biomeType;
-        }
-        else
-        {
-            throw new System.IndexOutOfRangeException("Position out of bounds of the biome map.");
-        }
-    }
-
-    private void SpawnRock(int x, int y, BiomeType biome)
+/*     private void SpawnRock(int x, int y, BiomeType biome)
     {
         if (biome == BiomeType.Water) return;
         float nutrition = nutrientMap[x, y];
@@ -62,9 +39,9 @@ public class WorldLoaderScript : MonoBehaviour
             Instantiate(rockPrefab, new Vector3(x + 0.5f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
             MarkOccupied(x, y, 1, 1);
         }
-    }
+    } */
 
-    private void SpawnPlant(int x, int y, BiomeType biome)
+/*     private void SpawnPlant(int x, int y, BiomeType biome)
     {
         float nutrition = nutrientMap[x, y];
         float elevation = elevationMap[x, y];
@@ -108,9 +85,9 @@ public class WorldLoaderScript : MonoBehaviour
             case BiomeType.Desert:
                 break;
         }
-    }
+    } */
 
-    void DrawWorld(int startX, int stopX, int startY, int stopY)
+    void DrawWorld(WorldSaveState world, int startX, int stopX, int startY, int stopY)
     {
         for (int x = startX; x < stopX; x ++)
         {
@@ -139,12 +116,19 @@ public class WorldLoaderScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Helper function used for getting correct prefab based on provided
+    /// prefab id. Note that each prefab must have a WorldObjectIdentity
+    /// component attached to it.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public GameObject GetPrefabByID(string id)
     {
         if (prefabLookupTable.TryGetValue(id, out GameObject foundPrefab))
         {
             return foundPrefab;
-        }
+        }   
         return null;
     }
 
@@ -175,6 +159,8 @@ public class WorldLoaderScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        DrawWorld( 0, width, 0, height);
+        WorldSaveState world = SaveManagerScript.Instance.save.world;
+        DrawWorld(world, 0, world.width, 0, world.height);
     }
 }
+

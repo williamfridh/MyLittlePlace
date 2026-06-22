@@ -148,28 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd39769012ec7747a63815b3a69d0ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldGeneratorScript
-  groundTilemap: {fileID: 0}
-  waterTilemap: {fileID: 0}
-  forestTile: {fileID: 0}
-  meadowTile: {fileID: 0}
-  mountainTile: {fileID: 0}
-  desertTile: {fileID: 0}
-  waterTile: {fileID: 0}
-  gravelTile: {fileID: 0}
-  spawnablePrefabs: []
-  treeBirchPrefab: {fileID: 0}
-  treeOakPrefab: {fileID: 0}
-  treePinePrefab: {fileID: 0}
-  cactusPrefab: {fileID: 0}
-  rockPrefab: {fileID: 0}
-  bushPrefab: {fileID: 0}
-  grassPrefab: {fileID: 0}
-  campfirePrefab: {fileID: 0}
-  noiseScale: 0.08
-  width: 100
-  height: 100
-  spawnedObjectsParent: {fileID: 0}
-  startingCampRadius: 3
 --- !u!4 &1065128472
 Transform:
   m_ObjectHideFlags: 0
@@ -180,6 +158,70 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1220923392
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1220923394}
+  - component: {fileID: 1220923393}
+  m_Layer: 0
+  m_Name: Save Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1220923393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1220923392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28a1aae3ac050ac438d0e9c18e032be2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  forceNewSave: 1
+  save:
+    todoList: []
+    todoListInitilized: 0
+    world:
+      noiseScale: 0
+      temperatureOffsetX: 0
+      temperatureOffsetY: 0
+      moistureOffsetX: 0
+      moistureOffsetY: 0
+      elevationOffsetX: 0
+      elevationOffsetY: 0
+      nutrientOffsetX: 0
+      nutrientOffsetY: 0
+      startingCampRadius: 3
+      worldCreatedAt: 
+      width: 0
+      height: 0
+      cellGrid: []
+    worldInitilized: 0
+--- !u!4 &1220923394
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1220923392}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 209.96132, y: 231.89085, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -328,3 +370,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 1550724905}
   - {fileID: 1065128472}
+  - {fileID: 1220923394}

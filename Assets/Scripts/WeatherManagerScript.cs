@@ -70,7 +70,7 @@ public class WeatherManagerScript : MonoBehaviour
         }
         // Continue as normal
         Vector3 playerPos = PlayerScript.Instance.transform.position;
-        BiomeType playerBiome = WorldLoaderScript.Instance.GetBiomeAtPosition(playerPos);
+        BiomeType playerBiome = SaveManagerScript.Instance.save.world.GetBiomeAtPosition(playerPos);
         switch(playerBiome)
         {
             case BiomeType.Meadow:
@@ -105,7 +105,7 @@ public class WeatherManagerScript : MonoBehaviour
         // Get player location
         Vector3 playerPos = PlayerScript.Instance.transform.position;
         // Get biome at player location
-        BiomeType playerBiome = WorldLoaderScript.Instance.GetBiomeAtPosition(playerPos);
+        BiomeType playerBiome = SaveManagerScript.Instance.save.world.GetBiomeAtPosition(playerPos);
         // Get time of day ratio
         float timeRatio = TimeManagerScript.Instance.GetTimeNightRatio();
         //Debug.Log(timeRatio);

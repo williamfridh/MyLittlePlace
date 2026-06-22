@@ -221,13 +221,14 @@ public class TodoManagerScript : MonoBehaviour
 
     void Start()
     {
-        if (!SaveManagerScript.Instance.Load())
+        if (!SaveManagerScript.Instance.save.todoListInitilized)
         {
             // If no todoList are loaded, initialize with some default todoList
             AddTodo("Buy groceries");
             AddTodo("Walk the dog");
             AddTodo("Finish homework");
             SaveManagerScript.Instance.UpdateTodoList(todoList);
+            SaveManagerScript.Instance.save.todoListInitilized = true;
         }
         else
         {
