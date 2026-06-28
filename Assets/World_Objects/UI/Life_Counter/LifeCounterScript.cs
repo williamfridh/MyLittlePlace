@@ -21,7 +21,7 @@ public class LifeCounterScript : MonoBehaviour
     /// </summary>
     void DrawLife()
     {
-        PlayerScript player = PlayerScript.Instance;
+        PlayerSaveState player = SaveManagerScript.Instance.playerSave;
         if (player == null) return;
         int life = player.life;
 

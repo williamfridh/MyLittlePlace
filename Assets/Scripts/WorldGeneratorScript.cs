@@ -2,118 +2,34 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class WorldGeneratorScript : MonoBehaviour
 {
-
+    // Singleton
     public static WorldGeneratorScript Instance { get; set; }
 
-    // Tiles
-    [Header("Tile Settings")]
-    public Tilemap groundTilemap;
-    public Tilemap waterTilemap;
-    public TileBase forestTile;
-    public TileBase meadowTile;
-    public TileBase mountainTile;
-    public TileBase desertTile;
-    public TileBase waterTile;
-    public TileBase gravelTile;
+    [Header("Status text objects")]
+    [SerializeField] GameObject biomesCheck;
+    [SerializeField] GameObject bordersCheck;
+    [SerializeField] GameObject campCheck;
+    [SerializeField] GameObject natureCheck;
+    [SerializeField] GameObject terrainCheck;
+    [SerializeField] GameObject finalCheck;
 
-    // Nature to spawn
-    [Header("Nature Settings")]
-    public GameObject treeBirchPrefab;
-    public GameObject treeOakPrefab;
-    public GameObject treePinePrefab;
-    public GameObject cactusPrefab;
-    public GameObject rockPrefab;
-    public GameObject bushPrefab;
-    public GameObject grassPrefab;
+    [Header("Generation settings")]
+    [SerializeField] int width = 300;
+    [SerializeField] int height = 300;
+    [SerializeField] float noise = 0.1f;
+    [SerializeField] int campRadius = 3;
 
-    // Objects to spawn
-    [Header("Objects Settings")]
-    public GameObject campfirePrefab;
-
-    // Map generation parameters
-    [Header("Generation Parameters")]
-    public float noiseScale = 0.08f;
-    private float temperatureOffsetX;
-    private float temperatureOffsetY;
-    private float moistureOffsetX;
-    private float moistureOffsetY;
-    private float elevationOffsetX;
-    private float elevationOffsetY;
-    private float nutrientOffsetX;
-    private float nutrientOffsetY;
-    public int width = 100;
-    public int height = 100;
-    public GameObject spawnedObjectsParent;
-
-    [Header("Starting Camp")]
-    [SerializeField] private int startingCampRadius = 3;
-
-    // The world save state is handled as a separate class,
-    // this is important for convertion to JSON.
-    // Keep this simple, as logic should remain mostly in
-    // the outer script.
-    [System.Serializable]
-    public class WorldSaveState
-    {
-        public int width;
-        public int height;
-        public WorldCell[] cellGrid; // Flattened 2D array
-    }
-    [System.Serializable]
-    public class WorldCell
-    {
-        public int biomeType; // Biome type represented using int
-        public string objectId; // String such as "rock" or "birch"
-        public float temperature;
-        public float moisture;
-        public float elevation;
-        public float nutrition;
-    }
-
-    // Preset types
-    // Meadow = 1, Forest = 2, Mountain = 3, Desert = 4
-    public enum BiomeType
-    {
-        Meadow = 0,
-        Forest = 1,
-        Mountain = 2,
-        Desert = 3,
-        Water = 4
-    }
-    private enum BiomeSelectionScale
-    {
-        Low = 1,
-        Medium = 2,
-        High = 3
-    }
-
-    bool[,] mapInitilized;
-    BiomeType[,] biomeMap;
-    bool[,] occupiedMap;
-    float[,] temperatureMap;
-    float[,] moistureMap;
-    float[,] elevationMap;
-    float[,] nutrientMap;
-
-    public BiomeType GetBiomeAtPosition(Vector3 position)
-    {
-        int x = Mathf.FloorToInt(position.x);
-        int y = Mathf.FloorToInt(position.y);
-
-        if (x >= 0 && x < width && y >= 0 && y < height)
-        {
-            return biomeMap[x, y];
-        }
-        else
-        {
-            throw new System.IndexOutOfRangeException("Position out of bounds of the biome map.");
-        }
-    }
-
-    private void valueToScale(float value, out BiomeSelectionScale scale)
+    /// <summary>
+    /// Used for converting numbers to descriptive buckets for easier
+    /// biome selection and interpretation.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="scale"></param>
+    private void CategorizeFloat(float value, out BiomeSelectionScale scale)
     {
         if (value < 0.33f)
         {
@@ -129,435 +45,318 @@ public class WorldGeneratorScript : MonoBehaviour
         }
     }
 
-    private void AddRockMapBorder()
+    public IEnumerator GenerateWorldRoutine(Action<WorldSaveState> onComplete)
     {
+        // Initilize a new world.
+        WorldSaveState newWorld = new WorldSaveState(width, height, noise, campRadius);
+
+        // Add biomes
+        yield return AddBiomes(newWorld);
+        // Add map borders
+        yield return AddMapBorders(newWorld);
+        // Add camp
+        yield return AddCamp(newWorld);
+        // Add nature
+        yield return AddNature(newWorld);
+        // Add terrain
+        yield return AddTerrain(newWorld);
+
+        // Set spawn location
+        newWorld.spawnX =(width / 2) - 0.5f;
+        newWorld.spawnY = (height / 2) + 1.0f;
+        SaveManagerScript.Instance.playerSave.x_pos = newWorld.spawnX;
+        SaveManagerScript.Instance.playerSave.y_pos = newWorld.spawnY;
+        SaveManagerScript.Instance.SavePlayer();
+
+        // Pass data to caller
+        onComplete?.Invoke(newWorld);
+    }
+
+    public IEnumerator AddBiomes(WorldSaveState world)
+    {
+        // Loop through the tiles (x and y) coordinates
+        // and assign temperature, moisture, elevation,
+        // and nutrition, then biome type.
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+
+                WorldCell cell = new WorldCell();
+                world.cellGrid.Add(cell);
+
+                // Get temperature, moisture, elevation, and nutrition
+                float temperature = Mathf.PerlinNoise(
+                    (x + world.temperatureOffsetX) * world.noiseScale,
+                    (y + world.temperatureOffsetY) * world.noiseScale
+                    );
+                float moisture = Mathf.PerlinNoise(
+                    (x + world.moistureOffsetX) * world.noiseScale,
+                    (y + world.moistureOffsetY) * world.noiseScale
+                    );
+                float elevation = Mathf.PerlinNoise(
+                    (x + world.elevationOffsetX) * world.noiseScale,
+                    (y + world.elevationOffsetY) * world.noiseScale
+                    );
+                float nutrition = Mathf.PerlinNoise(
+                    (x + world.nutrientOffsetX) * world.noiseScale,
+                    (y + world.nutrientOffsetY) * world.noiseScale
+                    );
+
+                // Convert temperature and moisture to biome selection scale.
+                CategorizeFloat(temperature, out BiomeSelectionScale tempScale);
+                CategorizeFloat(moisture, out BiomeSelectionScale moistScale);
+
+                cell.temperature     = tempScale;
+                cell.moisture        = moistScale;
+                cell.elevation       = elevation;
+                cell.nutrition       = nutrition;
+
+                // Select biome type depending on temperature and moisture.
+                if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.Low)
+                {
+                    cell.biomeType = BiomeType.Mountain;
+                }
+                else if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.Medium)
+                {
+                    cell.biomeType = BiomeType.Forest;
+                }
+                else if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.High)
+                {
+                    cell.biomeType = BiomeType.Forest;
+                }
+                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.Low)
+                {
+                    cell.biomeType = BiomeType.Desert;
+                }
+                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.Medium)
+                {
+                    cell.biomeType = BiomeType.Meadow;
+                }
+                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.High)
+                {
+                    cell.biomeType = BiomeType.Forest;
+                }
+                else if (tempScale == BiomeSelectionScale.High && moistScale == BiomeSelectionScale.Low)
+                {
+                    cell.biomeType = BiomeType.Desert;
+                }
+                else if (tempScale == BiomeSelectionScale.High && moistScale == BiomeSelectionScale.Medium)
+                {
+                    cell.biomeType = BiomeType.Water;
+                }
+                else
+                {
+                    cell.biomeType = BiomeType.Water; // Default biome
+                }
+            }
+            // We yield every 10th column to prevent lowered frame rate
+            if (x % 10 == 0) 
+            {
+                yield return null; 
+            }
+        }
+        Debug.Log("WorldGeneratorScript: Generated biomes");
+        biomesCheck.SetActive(true);
+        yield return null;
+    }
+
+    public IEnumerator AddMapBorders(WorldSaveState world)
+    {
+        // Add map rock border.
         // Top and bottom borders
         for (int x = 0; x < width; x++)
         {
-            if (biomeMap[x, 0] != BiomeType.Water)
-            {
-                Instantiate(rockPrefab, new Vector3(x + 0.5f, 0, 0), Quaternion.identity, spawnedObjectsParent.transform);
-                MarkOccupied(x, 0, 1, 1);
-            }
-
-            if (biomeMap[x, height-1] != BiomeType.Water)
-            {
-                Instantiate(rockPrefab, new Vector3(x + 0.5f, height-1, 0), Quaternion.identity, spawnedObjectsParent.transform);
-                MarkOccupied(x, height-1, 1, 1);
-            }
+            WorldCell topCell = world.GetCell(x, 0);
+            WorldCell bottomCell = world.GetCell(x, height-1);
+            if (topCell.biomeType != BiomeType.Water) topCell.AssignObject("rock_1x1_rand");
+            if (bottomCell.biomeType != BiomeType.Water) bottomCell.AssignObject("rock_1x1_rand");
         }
         // Left and right borders
         for (int y = 1; y < height - 1; y++)
         {
-            if (biomeMap[0, y] != BiomeType.Water)
-            {
-                Instantiate(rockPrefab, new Vector3(0.5f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
-                MarkOccupied(0, y, 1, 1);
-            }
-
-            if (biomeMap[width-1, y] != BiomeType.Water)
-            {
-                Instantiate(rockPrefab, new Vector3(width - 1.0f + 0.5f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
-                MarkOccupied(width-1, y, 1, 1);
-            }
+            WorldCell leftCell = world.GetCell(0, y);
+            WorldCell rightCell = world.GetCell(width-1, y);
+            if (leftCell.biomeType != BiomeType.Water) leftCell.AssignObject("rock_1x1_rand");
+            if (rightCell.biomeType != BiomeType.Water) rightCell.AssignObject("rock_1x1_rand");
         }
+        Debug.Log("WorldGeneratorScript: Added map borders");
+        bordersCheck.SetActive(true);
+        yield return null;
     }
 
-    private bool CanFitSize(int x, int y, int sizeX, int sizeY)
+    public IEnumerator AddCamp(WorldSaveState world)
     {
-        for (int i = 0; i < sizeX; i++) {
-            for (int j = 0; j < sizeY; j++) {
-                // Catch index out of bounds
-                if (x + i >= width || y + j >= height) return false;
-                // Check if if specific offset tile is water
-                if (biomeMap[x + i, y + j] == BiomeType.Water) return false;
-                // Check if tile is occupied
-                if (occupiedMap[x + i, y + j]) return false;
-            }
-        }
-        return true; // All tiles are within bounds and not occupied
-    }
-
-    private void MarkOccupied(int x, int y, int sizeX, int sizeY)
-    {
-        for (int i = 0; i < sizeX; i++) {
-            for (int j = 0; j < sizeY; j++) {
-                if (x + i < width && y + j < height) {
-                    occupiedMap[x + i, y + j] = true; // Mark tile as occupied
-                }
-            }
-        }
-    }
-
-    private void SpawnRock(int x, int y, BiomeType biome)
-    {
-        if (biome == BiomeType.Water) return;
-        float nutrition = nutrientMap[x, y];
-        float elevation = elevationMap[x, y];
-        // Lower nutrition means more rocks, higher nutrition means more plants
-        float rockSpawnChance = ((1.0f - nutrition) * 0.02f + elevation * 0.02f) / 2.0f; // Normalize to 0-1 range
-        if (biome == BiomeType.Mountain)
-        {
-            rockSpawnChance += 0.1f; // Mountains have more rocks
-        }
-        rockSpawnChance = Mathf.Clamp01(rockSpawnChance); // Ensure chance is between 0 and 1
-        if (Random.Range(0f, 1f) < rockSpawnChance && CanFitSize(x, y, 1, 1))
-        {
-            Instantiate(rockPrefab, new Vector3(x + 0.5f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
-            MarkOccupied(x, y, 1, 1);
-        }
-    }
-
-    private void SpawnPlant(int x, int y, BiomeType biome)
-    {
-        float nutrition = nutrientMap[x, y];
-        float elevation = elevationMap[x, y];
-        float location_quality = (nutrition * 0.8f) + ((1.0f - elevation) * 0.2f); // Higher nutrition and lower elevation means better location for plants
-        float spawnChange = Random.Range(0.0f, 0.5f + location_quality * 0.5f);
-        //float spawnChance = Random.Range(0f, 1f) * (nutrition * 0.5f) * (1.0f - elevation) * 0.5f; // Higher nutrition and lower elevation means more plants
-        switch (biome)
-        {
-            case BiomeType.Meadow:
-                if (spawnChange < 0.2f) {
-                    break;
-                } else if (spawnChange >= 0.2f && spawnChange < 0.5f && CanFitSize(x, y, 1, 1))
-                {
-                    Instantiate(grassPrefab, new Vector3(x + 0.5f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
-                    MarkOccupied(x, y, 1, 1);
-                } else if (spawnChange > 0.5f && spawnChange < 0.8f && CanFitSize(x, y, 1, 2)) {
-                    Instantiate(treeBirchPrefab, new Vector3(x + 0.5f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
-                    MarkOccupied(x, y, 1, 2);
-                } else if (spawnChange >= 0.8f && CanFitSize(x, y, 2, 2)) {
-                    Instantiate(treeOakPrefab, new Vector3(x+1.0f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
-                    MarkOccupied(x, y, 2, 2);
-                } else {
-                    break;
-                }
-                break;
-            case BiomeType.Forest:
-                if (spawnChange >= 0.5f && spawnChange < 0.8f && CanFitSize(x, y, 2, 1)) {
-                    Instantiate(treePinePrefab, new Vector3(x+1.0f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
-                    MarkOccupied(x, y, 2, 1);
-                }  else if (spawnChange >= 0.8f && CanFitSize(x, y, 2, 1)) {
-                    Instantiate(treeOakPrefab, new Vector3(x+1.0f, y, 0), Quaternion.identity, spawnedObjectsParent.transform);
-                    MarkOccupied(x, y, 2, 1);
-                } else {
-                    break;
-                }
-                break;
-            case BiomeType.Mountain:
-                break;
-            case BiomeType.Water:
-                break;
-            case BiomeType.Desert:
-                break;
-        }
-    }
-
-    void Generate()
-    {
-        // Initilize a new world.
-        WorldSaveState world = new WorldSaveState();
-        world.width = width;
-        world.height = height;
-
-        // Prepare arrays to hold data for serialization,
-        // keep it simple as this is what will have to be
-        // saved and used for loading/building the world.
-        bool[width, height] mapInitilized = false; // Will not be stored
-        int[width, height] groundBiome = 0;
-        int[width, height] WaterBiome = 0;
-        int[width, height] ClifBiome = 0;
-        
-        // Prepare offsets
-        temperatureOffsetX = Random.Range(0f, 10000f);
-        temperatureOffsetY = Random.Range(0f, 10000f);
-        moistureOffsetX = Random.Range(0f, 10000f);
-        moistureOffsetY = Random.Range(0f, 10000f);
-        elevationOffsetX = Random.Range(0f, 10000f);
-        elevationOffsetY = Random.Range(0f, 10000f);
-        nutrientOffsetX = Random.Range(0f, 10000f);
-        nutrientOffsetY = Random.Range(0f, 10000f);
-
-        // Then initilize the maps for temperature, moisture, elevation and nutrition.
-        // Note that these arrays will also be saved and reused.
-        temperatureMap = new float[width, height];
-        moistureMap = new float[width, height];
-        elevationMap = new float[width, height];
-        nutrientMap = new float[width, height];
-
-        // Loop through the tiles (x and y) coordinates
-        // and assign values to the arrays.
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                // Get temperature and moisture values from Perlin noise,
-                // then uses these values to 
-                float temperature = Mathf.PerlinNoise(
-                    (x + temperatureOffsetX) * noiseScale,
-                    (y + temperatureOffsetY) * noiseScale
-                    );
-                float moisture = Mathf.PerlinNoise(
-                    (x + moistureOffsetX) * noiseScale,
-                    (y + moistureOffsetY) * noiseScale
-                    );
-                temperatureMap[x, y] = temperature;
-                moistureMap[x, y] = moisture;
-                elevationMap[x, y] = Mathf.PerlinNoise(
-                    (x + elevationOffsetX) * noiseScale,
-                    (y + elevationOffsetY) * noiseScale
-                    );
-                nutrientMap[x, y] = Mathf.PerlinNoise(
-                    (x + nutrientOffsetX) * noiseScale,
-                    (y + nutrientOffsetY) * noiseScale
-                    );
-                // Convert temperature and moisture to biome selection scale.
-                valueToScale(temperature, out BiomeSelectionScale tempScale);
-                valueToScale(moisture, out BiomeSelectionScale moistScale);
-                // Sleect biome type depending on temperature and moisture.
-                int ground = groundTilemap[x, y];
-                int water = waterTilemap[x, y];
-                int clif = clifTilemap[x, y];
-                // Meadow = 1, Forest = 2, Mountain = 3, Desert = 4
-                if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.Low)
-                {
-                    ground = 3;
-                }
-                else if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.Medium)
-                {
-                    ground = 3;
-                }
-                else if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.High)
-                {
-                    ground = 3;
-                }
-                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.Low)
-                {
-                    ground = 4;
-                }
-                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.Medium)
-                {
-                    ground = 1;
-                }
-                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.High)
-                {
-                    ground = 2;
-                }
-                else if (tempScale == BiomeSelectionScale.High && moistScale == BiomeSelectionScale.Low)
-                {
-                    ground = 4;
-                }
-                else if (tempScale == BiomeSelectionScale.High && moistScale == BiomeSelectionScale.Medium)
-                {
-                    water = 1;
-                }
-
-                // Add objects and/or prop
-
-
-                // Mark as initlized
-                mapInitilized[x, y] = true;
-            }
-        }
-
-    void Awake()
-    {
-        // Singleton pattern to ensure only one instance of WorldGeneratorScript exists
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-
-        // Prepare offsets
-        temperatureOffsetX = Random.Range(0f, 10000f);
-        temperatureOffsetY = Random.Range(0f, 10000f);
-        moistureOffsetX = Random.Range(0f, 10000f);
-        moistureOffsetY = Random.Range(0f, 10000f);
-        elevationOffsetX = Random.Range(0f, 10000f);
-        elevationOffsetY = Random.Range(0f, 10000f);
-        nutrientOffsetX = Random.Range(0f, 10000f);
-        nutrientOffsetY = Random.Range(0f, 10000f);
-
-        mapInitilized = new bool[width, height];
-
-        biomeMap = new BiomeType[width, height];
-        // Initilize occupied map to track which tiles are populated
-        // and set the default value to false (not occupied)
-        occupiedMap = new bool[width, height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                occupiedMap[x, y] = false;
-                mapInitilized[x, y] = false;
-            }
-        }
-        // Then initilize the maps for temperature, moisture, elevation and nutrition
-        temperatureMap = new float[width, height];
-        moistureMap = new float[width, height];
-        elevationMap = new float[width, height];
-        nutrientMap = new float[width, height];
-
-        // Finally we populate the maps
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                // Get temperature and moisture values from Perlin noise
-                float temperature = Mathf.PerlinNoise((x + temperatureOffsetX) * noiseScale, (y + temperatureOffsetY) * noiseScale);
-                float moisture = Mathf.PerlinNoise((x + moistureOffsetX) * noiseScale, (y + moistureOffsetY) * noiseScale);
-                // Save values in maps for later use (e.g., for spawning objects based on biome conditions)
-                temperatureMap[x, y] = temperature;
-                moistureMap[x, y] = moisture;
-                elevationMap[x, y] = Mathf.PerlinNoise((x + elevationOffsetX) * noiseScale, (y + elevationOffsetY) * noiseScale);
-                nutrientMap[x, y] = Mathf.PerlinNoise((x + nutrientOffsetX) * noiseScale, (y + nutrientOffsetY) * noiseScale);
-
-                // Target biome type based on temperature and moisture values
-                BiomeType t = biomeMap[x, y];
-                // Convert temperature and moisture to biome selection scale
-                valueToScale(temperature, out BiomeSelectionScale tempScale);
-                valueToScale(moisture, out BiomeSelectionScale moistScale);
-                // Select biome type
-                // Note that lower then 0.33 is low, 0.33 to 0.66 is medium and higher then 0.66 is high
-                BiomeType biome;
-                if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.Low)
-                {
-                    biome = BiomeType.Mountain;
-                }
-                else if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.Medium)
-                {
-                    biome = BiomeType.Forest;
-                }
-                else if (tempScale == BiomeSelectionScale.Low && moistScale == BiomeSelectionScale.High)
-                {
-                    biome = BiomeType.Forest;
-                }
-                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.Low)
-                {
-                    biome = BiomeType.Desert;
-                }
-                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.Medium)
-                {
-                    biome = BiomeType.Meadow;
-                }
-                else if (tempScale == BiomeSelectionScale.Medium && moistScale == BiomeSelectionScale.High)
-                {
-                    biome = BiomeType.Forest;
-                }
-                else if (tempScale == BiomeSelectionScale.High && moistScale == BiomeSelectionScale.Low)
-                {
-                    biome = BiomeType.Desert;
-                }
-                else if (tempScale == BiomeSelectionScale.High && moistScale == BiomeSelectionScale.Medium)
-                {
-                    biome = BiomeType.Water;
-                }
-                else
-                {
-                    biome = BiomeType.Water; // Default biome
-                }
-                // Save biome in map
-                biomeMap[x, y] = biome;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Used for fetching a list of coordinates shaping a circle. Intended to be
-    /// reused, created for CreateCamp function.
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="radius"></param>
-    List<Vector2> GetCircleCoordinates(float x, float y, int radius)
-    {
-        List<Vector2> coordinateList = new List<Vector2>();
-        
-        int startX = Mathf.FloorToInt(x - radius);
-        int endX = Mathf.FloorToInt(x + radius);
-        int startY = Mathf.FloorToInt(y - radius);
-        int endY = Mathf.FloorToInt(y + radius);
-        
-        for (float xx = startX; xx <= endX; xx++)
-        {
-            for (float yy = startY; yy <= endY; yy++)
-            {
-                float dx = (xx + 0.5f) - (x + 0.5f);
-                float dy = (yy + 0.5f) - (y + 0.5f);
-                if ((dx * dx) + (dy * dy) <= radius * radius)
-                {
-                    coordinateList.Add(new Vector2(xx, yy));
-                }
-            }
-        }
-        return coordinateList;
-    }
-
-    void CreateCamp(int radius = 3)
-    {
-        int x_center = width / 2 - 1;
-        int y_center = height / 2 - 1;
-        List<Vector2> campCoordinates = GetCircleCoordinates(x_center, y_center, radius);
+        // Create camp
+        int x_center = width / 2;
+        int y_center = height / 2;
+        List<Vector2> campCoordinates = world.GetCircleCoordinates(x_center, y_center, campRadius);
         // Create biome
         foreach (Vector2 coordinates in campCoordinates)
         {
             int cx = (int)coordinates.x;
             int cy = (int)coordinates.y;
-            groundTilemap.SetTile(new Vector3Int(cx, cy, 0), gravelTile);
-            SetBiomeType(cx, cy, BiomeType.Meadow);
-            MarkOccupied(cx, cy, 1, 1);
-            mapInitilized[cx, cy] = true;
+            WorldCell cell = world.GetCell(cx, cy);
+            cell.biomeType = BiomeType.Camp;
+            cell.occupied = true;
         }
-        // Move player
-        PlayerScript.Instance.transform.position = new Vector3(x_center-2, y_center, 0);
         // Add campfire
-        Instantiate(campfirePrefab, new Vector3(x_center, y_center, 0), Quaternion.identity, spawnedObjectsParent.transform);
+        WorldCell campFireCell = world.GetCell(x_center, y_center);
+        campFireCell.AssignObject("campfire", true);
+        Debug.Log("WorldGeneratorScript: Added camp");
+        campCheck.SetActive(true);
+        yield return null;
     }
 
-    void SetBiomeType(int x, int y, BiomeType biomeType)
+    public IEnumerator AddTerrain(WorldSaveState world)
     {
-        if (x == null || y == null || biomeType == null) return;
-        biomeMap[x, y] = biomeType;
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        AddRockMapBorder();
-        CreateCamp(startingCampRadius);
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                BiomeType biome = biomeMap[x, y];
-                if (mapInitilized[x, y]) continue; // Already spawned area
-                // Set tile
-                switch (biome)
+                WorldCell cell = world.GetCell(x, y);
+                if (cell.biomeType == BiomeType.Water) continue;
+                float nutrition = cell.nutrition;
+                float elevation = cell.elevation;
+
+                // Lower nutrition means more rocks, higher nutrition means more plants
+                float rockSpawnChance = ((1.0f - nutrition) * 0.02f + elevation * 0.02f) / 2.0f; // Normalize to 0-1 range
+                if (cell.biomeType == BiomeType.Mountain)
                 {
-                    case BiomeType.Forest:
-                        groundTilemap.SetTile(new Vector3Int(x, y, 0), forestTile);
-                        break;
-                    case BiomeType.Meadow:
-                        groundTilemap.SetTile(new Vector3Int(x, y, 0), meadowTile);
-                        break;
-                    case BiomeType.Mountain:
-                        groundTilemap.SetTile(new Vector3Int(x, y, 0), mountainTile);
-                        break;
-                    case BiomeType.Desert:
-                        groundTilemap.SetTile(new Vector3Int(x, y, 0), desertTile);
-                        break;
-                    case BiomeType.Water:
-                        waterTilemap.SetTile(new Vector3Int(x, y, 0), waterTile);
-                        break;
+                    rockSpawnChance += 0.1f; // Mountains have more rocks
                 }
-                // Spawn objects based on biome
-                SpawnRock(x, y, biome);
-                SpawnPlant(x, y, biome);
-                mapInitilized[x, y] = true;
+                rockSpawnChance = Mathf.Clamp01(rockSpawnChance); // Ensure chance is between 0 and 1
+                if (UnityEngine.Random.Range(0f, 1f) < rockSpawnChance && world.CanFitSize(x, y, 1, 1))
+                {
+                    
+                    cell.AssignObject("rock_1x1_rand");
+                    world.MarkAsOccupied(x, y, 1, 1);
+                }
+            }
+            // We yield every 10th column to prevent lowered frame rate
+            if (x % 10 == 0) 
+            {
+                yield return null; 
             }
         }
+        Debug.Log("WorldGeneratorScript: Added terrain");
+        terrainCheck.SetActive(true);
+        yield return null;
     }
 
-    // Update is called once per frame
-    void Update()
+    public IEnumerator AddNature(WorldSaveState world)
     {
-        
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                WorldCell cell = world.GetCell(x, y);
+
+                if (cell.occupied) continue;
+
+                float nutrition = cell.nutrition;
+                float elevation = cell.elevation;
+
+                float location_quality = (nutrition * 0.8f) + ((1.0f - elevation) * 0.2f); // Higher nutrition and lower elevation means better location for plants
+                float spawnChange = UnityEngine.Random.Range(0.0f, 0.5f + location_quality * 0.5f);
+
+                switch (cell.biomeType)
+                {
+                    case BiomeType.Meadow:
+                        if (spawnChange < 0.2f) {
+                            break;
+                        } else if (spawnChange >= 0.2f && spawnChange < 0.45f && world.CanFitSize(x, y, 1, 1))
+                        {
+                            cell.AssignObject("bush_0");
+                            world.MarkAsOccupied(x, y, 1, 1);
+                        } else if (spawnChange >= 0.45f && spawnChange < 0.5f && world.CanFitSize(x, y, 1, 1))
+                        {
+                            cell.AssignObject("raspberry_bush_0");
+                            world.MarkAsOccupied(x, y, 1, 1);
+                        } else if (spawnChange > 0.5f && spawnChange < 0.8f && world.CanFitSize(x, y, 1, 2)) {
+                            cell.AssignObject("tree_birch");
+                            world.MarkAsOccupied(x, y, 1, 2);
+                        } else if (spawnChange >= 0.8f && world.CanFitSize(x, y, 2, 2)) {
+                            cell.AssignObject("tree_oak");
+                            world.MarkAsOccupied(x, y, 2, 2);
+                        } else {
+                            // ...
+                        }
+                        break;
+                    case BiomeType.Forest:
+                        if (spawnChange < 0.2f) {
+                            break;
+                        } else if (spawnChange >= 0.2f && spawnChange < 0.40f && world.CanFitSize(x, y, 1, 1))
+                        {
+                            cell.AssignObject("thorn_bush_0");
+                            world.MarkAsOccupied(x, y, 1, 1);
+                        } else if (spawnChange >= 0.40f && spawnChange < 0.45f && world.CanFitSize(x, y, 1, 1))
+                        {
+                            cell.AssignObject("blueberry_bush_0");
+                            world.MarkAsOccupied(x, y, 1, 1);
+                        } else if (spawnChange >= 0.45f && spawnChange < 0.5f && world.CanFitSize(x, y, 1, 1))
+                        {
+                            cell.AssignObject("blueberry_bush_0");
+                            world.MarkAsOccupied(x, y, 1, 1);
+                        } else if (spawnChange >= 0.5f && spawnChange < 0.8f && world.CanFitSize(x, y, 2, 1)) {
+                            cell.AssignObject("tree_pine");
+                            world.MarkAsOccupied(x, y, 2, 1);
+                        }  else if (spawnChange >= 0.8f && world.CanFitSize(x, y, 2, 2)) {
+                            cell.AssignObject("tree_oak");
+                            world.MarkAsOccupied(x, y, 2, 2);
+                        } else {
+                            // ...
+                        }
+                        break;
+                    case BiomeType.Mountain:
+                        break;
+                    case BiomeType.Water:
+                        break;
+                    case BiomeType.Desert:
+                        break;
+                }
+            }
+            // We yield every 10th column to prevent lowered frame rate
+            if (x % 10 == 0) 
+            {
+                yield return null; 
+            }
+        }
+        Debug.Log("WorldGeneratorScript: Added nature");
+        natureCheck.SetActive(true);
+        yield return null;
+    }
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            // Optional: DontDestroyOnLoad(gameObject); if you want it to persist across scenes
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        // Hide texts
+        if (biomesCheck) biomesCheck.SetActive(false);
+        if (bordersCheck) bordersCheck.SetActive(false);
+        if (campCheck) campCheck.SetActive(false);
+        if (natureCheck) natureCheck.SetActive(false);
+        if (finalCheck) finalCheck.SetActive(false);
+        if (terrainCheck) terrainCheck.SetActive(false);
+    }
+
+    void Start()
+    {
+        if (SaveManagerScript.Instance)
+        {
+            SaveManagerScript.Instance.Load(true, true, true);
+        }
+        else
+        {
+            Debug.LogError("WorldGeneratorScript: Could not access SaveManagerScript instance");
+        }
     }
 }

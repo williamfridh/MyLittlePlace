@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class PlayerScript : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] public GameObject character;
     [SerializeField] public float moveSpeed = 5f;
+    [SerializeField] public float interactTime = 1f;
+    private float interactTimer = 0f;
     [SerializeField] public float jumpTime = 1f;
     private float jumpTimer = 0f;
     [SerializeField] public float visualJumpHeight = 1f;
@@ -19,12 +22,6 @@ public class PlayerScript : MonoBehaviour
 
     public Camera playerCamera;
     [SerializeField] private Animator _animator;
-    
-    [Header("Life")]
-    [SerializeField] public int life = 10;
-
-    [Header("Audio")]
-    [SerializeField] AudioSource jumpAudio;
 
 
     public float currentHorizontal = 0; // -1 for left, 1 for right, 0 for no horizontal movement
@@ -32,7 +29,15 @@ public class PlayerScript : MonoBehaviour
     public bool isMoving;
     private bool jumpRequested = false;
 
-    private WorldGeneratorScript.BiomeType currentBiomeType;
+    private BiomeType currentBiomeType;
+    private Vector3 pushbackDirection;
+    [SerializeField] bool enableMovement = true; 
+    [SerializeField] float pushbackTime = 0.5f; 
+    float pushbackTimer = 0f; 
+
+    [Header("Juice Settings")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    private Coroutine flashCoroutine;
 
     void Awake()
     {
@@ -49,6 +54,33 @@ public class PlayerScript : MonoBehaviour
         _animator.SetBool("isJumping", false);
     }
 
+    void Start()
+    {
+        PlayerSaveState playerSave = SaveManagerScript.Instance.playerSave;
+        if (!playerSave.position_initilized)
+        {
+            MoveToSpawn();
+            playerSave.position_initilized = true;
+            SaveManagerScript.Instance.SavePlayer();
+        }
+        else
+        {
+            MoveToSavedPosition();
+        }
+    }
+
+    private void MoveToSpawn()
+    {
+        WorldSaveState worldSave = SaveManagerScript.Instance.worldSave;
+        transform.position = new Vector3(worldSave.spawnX, worldSave.spawnY, 0f);
+    }
+
+    private void MoveToSavedPosition()
+    {
+        PlayerSaveState playerSave = SaveManagerScript.Instance.playerSave;
+        transform.position = new Vector3(playerSave.x_pos, playerSave.y_pos, 0f);
+    }
+
     private void EnableJoystick()
     {
         if (moveActionReference != null) moveActionReference.action.Enable();
@@ -62,11 +94,83 @@ public class PlayerScript : MonoBehaviour
     public void RequestJump()
     {
         if (_animator.GetBool("isJumping")) return;
-        //jumpRequested = true;
         gameObject.layer = jumpingLayer;
         jumpTimer = jumpTime;
         _animator.SetBool("isJumping", true);
-        if (jumpAudio != null) jumpAudio.Play();
+        if (AudioManagerScript.Instance)
+        {
+            AudioManagerScript.Instance.PlayJumpSound();
+        }
+    }
+
+    public void RequestInteract()
+    {
+        if (_animator.GetBool("isInteracting")) return;
+        Debug.Log("PlayerScript: Interaction requested");
+        _animator.SetBool("isInteracting", true);
+        interactTimer = interactTime;
+        if (InteractionScript.Instance) InteractionScript.Instance.TriggerInteraction();
+    }
+
+    public void TakeDamage(int damage, float pushback, Vector3 hazardPosition)
+    {
+        if (SaveManagerScript.Instance.playerSave == null) return;
+        Debug.Log($"PlayerScript: TakeDamage triggered (damage = {damage} and pushback = {pushback})");
+
+        // Update life
+        int oldLife = SaveManagerScript.Instance.playerSave.life;
+        int newLife = Mathf.Max(0, oldLife - damage);
+        SaveManagerScript.Instance.playerSave.life = newLife;
+        SaveManagerScript.Instance.SavePlayer();
+
+        // Push back
+        if (pushback >= 0)
+        {
+            // Calculate direction away from what hit you
+            pushbackDirection = (transform.position - hazardPosition).normalized * pushback;
+            enableMovement = false; // Disable player input during pushback
+            pushbackTimer = pushbackTime;
+            TriggerFlash(pushbackTime);
+        }
+
+        // If death
+        if (newLife == 0)
+        {
+            // Reset life and move player to spawn
+            SaveManagerScript.Instance.playerSave.life = 3;
+            MoveToSpawn();
+        }
+    }
+
+    /// <summary>
+    /// Create flash routine to represent damage taken.
+    /// </summary>
+    /// <param name="duration"></param>
+    public void TriggerFlash(float duration)
+    {
+        if (flashCoroutine != null) StopCoroutine(flashCoroutine);
+        flashCoroutine = StartCoroutine(FlashSequence(duration));
+    }
+
+    /// <summary>
+    /// Flash sequence to represent damage taken.
+    /// </summary>
+    /// <param name="duration"></param>
+    /// <returns></returns>
+    private IEnumerator FlashSequence(float duration)
+    {
+        // Access the unique material instance
+        Material mat = spriteRenderer.material;
+        // And turn it into white instantly
+        mat.SetFloat("_FlashAmount", 1f);
+        Debug.Log(mat.GetFloat("_FlashAmount"));
+
+        yield return new WaitForSeconds(duration);
+
+        // Return to normal sprite color
+        mat.SetFloat("_FlashAmount", 0f);
+        Debug.Log(mat.GetFloat("_FlashAmount"));
+        flashCoroutine = null;
     }
 
     // Update is called once per frame
@@ -76,11 +180,21 @@ public class PlayerScript : MonoBehaviour
         Vector3 playerPos = transform.position;
         playerCamera.transform.position = new Vector3(playerPos.x, playerPos.y, playerCamera.transform.position.z);
 
+        // Update save state (don't trigger save)
+        SaveManagerScript.Instance.playerSave.x_pos = playerPos.x;
+        SaveManagerScript.Instance.playerSave.y_pos = playerPos.y;
+
         // Stop if game is paused
-        if (WorldStateScript.Instance.paused) return;
+        if (GameStateScript.Instance.paused) return;
+
+        // Stop if movement is disabled
+        if (!enableMovement) return;
 
         // Read jump request
         if ( Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame) RequestJump();
+
+        // Read interact request
+        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame) RequestInteract();
 
         // Read movement inputs
         Vector2 moveInput = Vector2.zero;
@@ -99,6 +213,7 @@ public class PlayerScript : MonoBehaviour
 
         // Apply the translation
         Vector3 moveDirection = new Vector3(moveInput.x, moveInput.y, 0f).normalized;
+        pushbackDirection = moveDirection; // Store for pushback
         Vector3 targetTranslation = moveDirection * moveSpeed * Time.deltaTime;
 
         // Prevent moving into obstacle before applying translation
@@ -126,16 +241,41 @@ public class PlayerScript : MonoBehaviour
         }
 
         // Update current biome type
-        WorldGeneratorScript.BiomeType targetBiomeType = WorldGeneratorScript.Instance.GetBiomeAtPosition(transform.position);
+        BiomeType targetBiomeType = SaveManagerScript.Instance.worldSave.GetBiomeAtPosition(transform.position);
         if (currentBiomeType != targetBiomeType)
         {
             currentBiomeType = targetBiomeType;
             AmbienceAudioManager.Instance.TransitionToBiome(targetBiomeType);
+            AmbienceMusicManager.Instance.TransitionToBiome(targetBiomeType);
         }
     }
 
     void FixedUpdate()
     {
+        // Handle Pushback
+        if (pushbackTimer > 0)
+        {
+            // Move the actual root parent object through world space
+            transform.position += pushbackDirection * Time.fixedDeltaTime;
+
+            pushbackTimer -= Time.fixedDeltaTime;
+            if (pushbackTimer <= 0)
+            {
+                pushbackTimer = 0f;
+                enableMovement = true; // Return control to the player
+            }
+        }
+        // Handle interacting
+        if (interactTimer > 0)
+        {
+            interactTimer -= Time.fixedDeltaTime;
+            if (interactTimer <= 0)
+            {
+                interactTimer = 0f;
+                _animator.SetBool("isInteracting", false);
+            }
+        }
+        // Handle jumping
         if (jumpTimer > 0)
         {
             // Normalize time slace

@@ -49,15 +49,15 @@ public class WeatherManagerScript : MonoBehaviour
     [Tooltip("How fast the environment lighting transitions between biomes.")]
     public float blendSpeed = 2.0f;
 
-    private WorldGeneratorScript.BiomeType lastPlayerBiome;
+    private BiomeType lastPlayerBiome;
     private bool enabled = true;
 
      void Start()
     {
         // Stop if no WorldGeneratorScript is present
-        if (WorldGeneratorScript.Instance == null)
+        if (WorldRendererScript.Instance == null)
         {
-            Debug.LogError("WeatherManagerScript: No WorldGeneratorScript instance found in the scene.");
+            Debug.LogError("WeatherManagerScript: No WorldRendererScript instance found in the scene.");
             enabled = false;
             return;
         }
@@ -70,26 +70,26 @@ public class WeatherManagerScript : MonoBehaviour
         }
         // Continue as normal
         Vector3 playerPos = PlayerScript.Instance.transform.position;
-        WorldGeneratorScript.BiomeType playerBiome = WorldGeneratorScript.Instance.GetBiomeAtPosition(playerPos);
+        BiomeType playerBiome = SaveManagerScript.Instance.worldSave.GetBiomeAtPosition(playerPos);
         switch(playerBiome)
         {
-            case WorldGeneratorScript.BiomeType.Meadow:
+            case BiomeType.Meadow:
                 targetColor = meadowDayColor;
                 targetIntensity = meadowDayIntensity;
                 break;
-            case WorldGeneratorScript.BiomeType.Forest:
+            case BiomeType.Forest:
                 targetColor = forestDayColor;
                 targetIntensity = forestDayIntensity;
                 break;
-            case WorldGeneratorScript.BiomeType.Desert:
+            case BiomeType.Desert:
                 targetColor = desertDayColor;
                 targetIntensity = desertDayIntensity;
                 break;
-            case WorldGeneratorScript.BiomeType.Mountain:
+            case BiomeType.Mountain:
                 targetColor = mountainDayColor;
                 targetIntensity = mountainDayIntensity;
                 break;
-            case WorldGeneratorScript.BiomeType.Water:
+            case BiomeType.Water:
                 targetColor = waterDayColor;
                 targetIntensity = waterDayIntensity;
                 break;
@@ -105,7 +105,7 @@ public class WeatherManagerScript : MonoBehaviour
         // Get player location
         Vector3 playerPos = PlayerScript.Instance.transform.position;
         // Get biome at player location
-        WorldGeneratorScript.BiomeType playerBiome = WorldGeneratorScript.Instance.GetBiomeAtPosition(playerPos);
+        BiomeType playerBiome = SaveManagerScript.Instance.worldSave.GetBiomeAtPosition(playerPos);
         // Get time of day ratio
         float timeRatio = TimeManagerScript.Instance.GetTimeNightRatio();
         //Debug.Log(timeRatio);
@@ -123,31 +123,31 @@ public class WeatherManagerScript : MonoBehaviour
 
         switch(playerBiome)
         {
-            case WorldGeneratorScript.BiomeType.Meadow:
+            case BiomeType.Meadow:
                 targetDayColor = meadowDayColor;
                 targetNightColor = meadowNightColor;
                 targetDayIntensity = meadowDayIntensity;
                 targetNightIntensity= meadowNightIntensity;
                 break;
-            case WorldGeneratorScript.BiomeType.Forest:
+            case BiomeType.Forest:
                 targetDayColor = forestDayColor;
                 targetNightColor = forestNightColor;
                 targetDayIntensity = forestDayIntensity;
                 targetNightIntensity= forestNightIntensity;
                 break;
-            case WorldGeneratorScript.BiomeType.Desert:
+            case BiomeType.Desert:
                 targetDayColor = desertDayColor;
                 targetNightColor = desertNightColor;
                 targetDayIntensity = desertDayIntensity;
                 targetNightIntensity= desertNightIntensity;
                 break;
-            case WorldGeneratorScript.BiomeType.Mountain:
+            case BiomeType.Mountain:
                 targetDayColor = mountainDayColor;
                 targetNightColor = mountainNightColor;
                 targetDayIntensity = mountainDayIntensity;
                 targetNightIntensity= mountainNightIntensity;
                 break;
-            case WorldGeneratorScript.BiomeType.Water:
+            case BiomeType.Water:
                 targetDayColor = waterDayColor;
                 targetNightColor = waterNightColor;
                 targetDayIntensity = waterDayIntensity;

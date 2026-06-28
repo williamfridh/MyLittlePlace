@@ -11,6 +11,6 @@ public class CreateTodoScript : MonoBehaviour
         Debug.Log("CreateTodoScript: Adding todo '" + titleInputField.text +"'");
         TodoManagerScript.Instance.AddTodo(titleInputField.text);
         titleInputField.text = "";
-        MenuScript.Instance.ShowTodoMenu();
+        InGameMenuScript.Instance.ShowTodoMenu();
     }
 }
