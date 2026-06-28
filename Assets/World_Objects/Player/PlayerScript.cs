@@ -97,10 +97,7 @@ public class PlayerScript : MonoBehaviour
         gameObject.layer = jumpingLayer;
         jumpTimer = jumpTime;
         _animator.SetBool("isJumping", true);
-        if (AudioManagerScript.Instance)
-        {
-            AudioManagerScript.Instance.PlayJumpSound();
-        }
+        if (AudioManagerScript.Instance) AudioManagerScript.Instance.PlayJumpSound();
     }
 
     public void RequestInteract()
