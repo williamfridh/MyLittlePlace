@@ -4946,6 +4946,7 @@ GameObject:
   m_Component:
   - component: {fileID: 371389767884807910}
   - component: {fileID: 3738700371004036444}
+  - component: {fileID: 5058705414920241102}
   m_Layer: 0
   m_Name: Campfire Dead
   m_TagString: Untagged
@@ -5027,6 +5028,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 1
+--- !u!114 &5058705414920241102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3902025115007519817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a6f423a88cc15d45b3be603ebeebc34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YSortSprite
+  precision: 100
+  sortingOffset: 0
+  useParentTransform: 0
 --- !u!1 &5730312382774623624
 GameObject:
   m_ObjectHideFlags: 0
@@ -5180,6 +5196,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4839757678216443074}
   - component: {fileID: 7331460789983914967}
+  - component: {fileID: 6995035851828235367}
   m_Layer: 0
   m_Name: Campfire Alive
   m_TagString: Untagged
@@ -5261,6 +5278,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 1
+--- !u!114 &6995035851828235367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6448237930755614115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a6f423a88cc15d45b3be603ebeebc34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YSortSprite
+  precision: 100
+  sortingOffset: 0
+  useParentTransform: 0
 --- !u!1 &7829531000446244119
 GameObject:
   m_ObjectHideFlags: 0
@@ -5276,7 +5308,7 @@ GameObject:
   - component: {fileID: 1130149473301108226}
   - component: {fileID: 6355290442446518509}
   - component: {fileID: 6926713289199131284}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: campfire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5292,7 +5324,7 @@ Transform:
   m_GameObject: {fileID: 7829531000446244119}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6, y: 7, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5370,7 +5402,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7829531000446244119}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a6f423a88cc15d45b3be603ebeebc34, type: 3}
   m_Name: 

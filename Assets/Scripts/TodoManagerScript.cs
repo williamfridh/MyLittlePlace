@@ -51,6 +51,16 @@ public class TodoManagerScript : MonoBehaviour
     }
     void SelectRightUIColumn()
     {
+        if (rightUiColumnEditing == null)
+        {
+            Debug.LogError("TodoManagerScript: rightUiColumnEditing is not selected!");
+            return;
+        }
+        if (rightUiColumnNotEditing == null)
+        {
+            Debug.LogError("TodoManagerScript: rightUiColumnNotEditing is not selected!");
+            return;
+        }
         rightUiColumnEditing.SetActive(isEditing);
         rightUiColumnNotEditing.SetActive(!isEditing);
     }
@@ -221,18 +231,23 @@ public class TodoManagerScript : MonoBehaviour
 
     void Start()
     {
-        if (!SaveManagerScript.Instance.save.todoListInitilized)
+        if (SaveManagerScript.Instance == null)
+        {
+            Debug.LogWarning("TodoManagerScript: No SaveManagerScript instance found. Todo list will not work!");
+            return;
+        }
+        if (!SaveManagerScript.Instance.todoSave.todoListInitilized)
         {
             // If no todoList are loaded, initialize with some default todoList
             AddTodo("Buy groceries");
             AddTodo("Walk the dog");
             AddTodo("Finish homework");
             SaveManagerScript.Instance.UpdateTodoList(todoList);
-            SaveManagerScript.Instance.save.todoListInitilized = true;
+            SaveManagerScript.Instance.todoSave.todoListInitilized = true;
         }
         else
         {
-            todoList = SaveManagerScript.Instance.save.todoList;
+            todoList = SaveManagerScript.Instance.todoSave.todoList;
         }
         Refresh();
     }

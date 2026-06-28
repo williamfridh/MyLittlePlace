@@ -55,9 +55,9 @@ public class WeatherManagerScript : MonoBehaviour
      void Start()
     {
         // Stop if no WorldGeneratorScript is present
-        if (WorldLoaderScript.Instance == null)
+        if (WorldRendererScript.Instance == null)
         {
-            Debug.LogError("WeatherManagerScript: No WorldLoaderScript instance found in the scene.");
+            Debug.LogError("WeatherManagerScript: No WorldRendererScript instance found in the scene.");
             enabled = false;
             return;
         }
@@ -70,7 +70,7 @@ public class WeatherManagerScript : MonoBehaviour
         }
         // Continue as normal
         Vector3 playerPos = PlayerScript.Instance.transform.position;
-        BiomeType playerBiome = SaveManagerScript.Instance.save.world.GetBiomeAtPosition(playerPos);
+        BiomeType playerBiome = SaveManagerScript.Instance.worldSave.GetBiomeAtPosition(playerPos);
         switch(playerBiome)
         {
             case BiomeType.Meadow:
@@ -105,7 +105,7 @@ public class WeatherManagerScript : MonoBehaviour
         // Get player location
         Vector3 playerPos = PlayerScript.Instance.transform.position;
         // Get biome at player location
-        BiomeType playerBiome = SaveManagerScript.Instance.save.world.GetBiomeAtPosition(playerPos);
+        BiomeType playerBiome = SaveManagerScript.Instance.worldSave.GetBiomeAtPosition(playerPos);
         // Get time of day ratio
         float timeRatio = TimeManagerScript.Instance.GetTimeNightRatio();
         //Debug.Log(timeRatio);

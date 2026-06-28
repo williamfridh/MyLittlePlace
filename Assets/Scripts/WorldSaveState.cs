@@ -27,6 +27,9 @@ public class WorldSaveState
 
     public int width;
     public int height;
+
+    public float spawnX;
+    public float spawnY;
     public List<WorldCell> cellGrid = new List<WorldCell>(); // Flattened 2D array
 
     // Public getters
@@ -64,7 +67,7 @@ public class WorldSaveState
 
     public WorldCell GetCell(int x, int y)
     {
-        return cellGrid[x + y*width];
+        return cellGrid[x*width + y];
     }
 
     /// <summary>
@@ -86,7 +89,7 @@ public class WorldSaveState
         }
         else
         {
-            throw new System.IndexOutOfRangeException("Position out of bounds of the biome map.");
+            throw new System.IndexOutOfRangeException($"Position out of bounds of the biome map ({x}, {y}), on map of size ({width}, {height}).");
         }
     }
 
@@ -130,7 +133,7 @@ public class WorldSaveState
     /// <param name="sizeX"></param>
     /// <param name="sizeY"></param>
     /// <returns></returns>
-    private bool CanFitSize(int x, int y, int sizeX, int sizeY)
+    public bool CanFitSize(int x, int y, int sizeX, int sizeY)
     {
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
@@ -145,5 +148,18 @@ public class WorldSaveState
             }
         }
         return true; // All tiles are within bounds and not occupied
+    }
+
+    public void MarkAsOccupied(int x, int y, int x_amount, int y_amount)
+    {
+        for (int x_step = 0; x_step < x_amount; x_step++)
+        {
+            for (int y_step = 0; y_step < y_amount; y_step++)
+            {
+                WorldCell cell = GetCell(x+x_step, y+y_step);
+                if (cell == null) continue;
+                cell.occupied = true;
+            }
+        }
     }
 }

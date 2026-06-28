@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum BiomeType
 {
+    Menu = 100,
     Camp = 1,
     Meadow = 2,
     Forest = 3,
@@ -21,8 +22,8 @@ public enum BiomeSelectionScale
 public class WorldCell
 {
     public BiomeType biomeType;
-    public string objectId; // String such as "rock" or "birch"
-    public string propId; // String such as "grass" or "busch"
+    public string objectID; // String such as "rock" or "birch"
+    public string propID; // String such as "grass" or "busch"
     public BiomeSelectionScale temperature;
     public BiomeSelectionScale moisture;
     public float elevation;
@@ -32,7 +33,7 @@ public class WorldCell
     public bool AssignObject(string id, bool forceAdd = false)
     {
         if (occupied && !forceAdd) return false;
-        objectId = id;
+        objectID = id;
         occupied = true;
         return true;
     }

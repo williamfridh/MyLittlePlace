@@ -522,15 +522,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_18
+      name: blueberry_bush_base
       rect:
         serializedVersion: 2
         x: 64
         y: 160
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -544,15 +544,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_19
+      name: raspberry_bush_base
       rect:
         serializedVersion: 2
         x: 96
         y: 160
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -698,15 +698,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_26
+      name: blueberry_bush_berries
       rect:
         serializedVersion: 2
         x: 64
         y: 128
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -720,15 +720,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_27
+      name: raspberry_bush_berries
       rect:
         serializedVersion: 2
         x: 96
         y: 128
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -1182,15 +1182,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_48
+      name: thorn_0
       rect:
         serializedVersion: 2
         x: 0
         y: 32
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -1358,15 +1358,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_56
+      name: thorn_1
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -1551,6 +1551,8 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":true,"isAlternate":false}'
     nameFileIdTable:
+      blueberry_bush_base: -1755032197
+      blueberry_bush_berries: 1034643231
       desert: 1445061746
       forest: 7726320054572662708
       grass_0: -1726425084
@@ -1561,16 +1563,12 @@ TextureImporter:
       ground_terrain_14: 1955533857
       ground_terrain_15: 2084117483
       ground_terrain_16: -74379935
-      ground_terrain_18: -1755032197
-      ground_terrain_19: -665217028
       ground_terrain_20: 768076574
       ground_terrain_21: -52243208
       ground_terrain_22: 2115178978
       ground_terrain_23: -418067874
       ground_terrain_24: 1232360078
       ground_terrain_25: -1470205312
-      ground_terrain_26: 1034643231
-      ground_terrain_27: -2135001018
       ground_terrain_28: 1923828503
       ground_terrain_29: 1914106088
       ground_terrain_30: 1100104736
@@ -1591,7 +1589,6 @@ TextureImporter:
       ground_terrain_45: -497084640
       ground_terrain_46: -975136426
       ground_terrain_47: 1991150529
-      ground_terrain_48: -873626710
       ground_terrain_49: 492342397
       ground_terrain_5: 17770853
       ground_terrain_50: -1652497983
@@ -1600,7 +1597,6 @@ TextureImporter:
       ground_terrain_53: -755667993
       ground_terrain_54: -147049398
       ground_terrain_55: -812545107
-      ground_terrain_56: 2100336003
       ground_terrain_57: -1486434556
       ground_terrain_58: -1009704348
       ground_terrain_59: 1969689317
@@ -1614,6 +1610,10 @@ TextureImporter:
       ground_terrain_9: -751621729
       meadow: -1566920474
       moutain: -1827490776
+      raspberry_bush_base: -665217028
+      raspberry_bush_berries: -2135001018
+      thorn_0: -873626710
+      thorn_1: 2100336003
       water: 1208515914
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
