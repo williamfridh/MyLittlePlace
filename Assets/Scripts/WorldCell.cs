@@ -2,13 +2,13 @@ using UnityEngine;
 
 public enum BiomeType
 {
-    Menu = 100,
+    Water = 0,     // Lowest dominance: everything blends over water
     Camp = 1,
-    Meadow = 2,
-    Forest = 3,
-    Mountain = 4,
-    Desert = 5,
-    Water = 6
+    Desert = 2,    // (Sand)
+    Meadow = 3,
+    Forest = 4,
+    Mountain = 5,  // Highest dominance: mountains cut cleanly over everything
+    Menu = 100
 }
 
 public enum BiomeSelectionScale
