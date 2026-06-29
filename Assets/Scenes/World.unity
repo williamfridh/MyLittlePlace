@@ -1033,6 +1033,24 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 4ce45c099143dff328f85e29b8e7c00c, type: 2}
     - {fileID: 11400000, guid: 9cc79792e1711b6d69bef2d112d88a53, type: 2}
     - {fileID: 11400000, guid: af870e459f719bee89178a843de0e5d0, type: 2}
+  - biomeType: 1
+    sixteenTileSet:
+    - {fileID: 11400000, guid: 99e70fa8cd134b5d79f928b16228fd4b, type: 2}
+    - {fileID: 11400000, guid: e699d7e71f650968491cdfce3b4f6dfd, type: 2}
+    - {fileID: 11400000, guid: f49e9aba8616097b397057ca91204cf9, type: 2}
+    - {fileID: 11400000, guid: 6d49e9f9398384500b14d13eff98ad14, type: 2}
+    - {fileID: 11400000, guid: f909dec8145991dafbee269ceeb0f069, type: 2}
+    - {fileID: 11400000, guid: 5503dd98fe638533ca9ea0da2af0158c, type: 2}
+    - {fileID: 11400000, guid: 5767778c69884c2d2b6ba5871fd85670, type: 2}
+    - {fileID: 11400000, guid: 13af18f48bd6cf729b5da8aa4db082d6, type: 2}
+    - {fileID: 11400000, guid: cb4988fe9e77847a9825d32db7c0cf00, type: 2}
+    - {fileID: 11400000, guid: 628aea4a7c7c85ea980fec37b0706218, type: 2}
+    - {fileID: 11400000, guid: bc8bc6393955e6e87b77ab8a7059bc31, type: 2}
+    - {fileID: 11400000, guid: 00c1b2e37ef82264986442ea2c8c71a8, type: 2}
+    - {fileID: 11400000, guid: 4aebb7e699b11c6849c14cdf4b029b76, type: 2}
+    - {fileID: 11400000, guid: 4ce45c099143dff328f85e29b8e7c00c, type: 2}
+    - {fileID: 11400000, guid: 9cc79792e1711b6d69bef2d112d88a53, type: 2}
+    - {fileID: 11400000, guid: af870e459f719bee89178a843de0e5d0, type: 2}
   groundTilemap: {fileID: 1161746583}
   transitionTilemap: {fileID: 480828583}
   waterTilemap: {fileID: 1649904902}
@@ -1041,6 +1059,7 @@ MonoBehaviour:
   mountainTile: {fileID: 11400000, guid: af870e459f719bee89178a843de0e5d0, type: 2}
   desertTile: {fileID: 11400000, guid: b534178ca588facafa6dbf343b8b4393, type: 2}
   waterTile: {fileID: 0}
+  CampTile: {fileID: 0}
   yOffset: 0.25
   spawnedObjectsParent: {fileID: 429611333}
   spawnablePrefabs:

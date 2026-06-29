@@ -461,7 +461,7 @@ MonoBehaviour:
   finalCheck: {fileID: 1093937533}
   width: 300
   height: 300
-  noise: 0.08
+  noise: 0.01
   campRadius: 3
 --- !u!4 &304863257
 Transform:
@@ -1732,6 +1732,7 @@ MonoBehaviour:
   todoMenuPanel: {fileID: 0}
   hudPanel: {fileID: 0}
   addTodoMenuPanel: {fileID: 0}
+  inventoryPanel: {fileID: 0}
 --- !u!114 &1153193631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2563,11 +2564,14 @@ MonoBehaviour:
     worldCreatedAt: 
     width: 0
     height: 0
+    spawnX: 0
+    spawnY: 0
     cellGrid: []
   playerSave:
     life: 0
     x_pos: 0
     y_pos: 0
+    position_initilized: 0
     inventory: []
 --- !u!4 &2028227666
 Transform:

@@ -29,6 +29,7 @@ public class MultiBiomeDualGridRenderer : MonoBehaviour
     public TileBase mountainTile;
     public TileBase desertTile;
     public TileBase waterTile;
+    public TileBase CampTile;
 
     [Header("Fine tuning")]
     [SerializeField] private float yOffset = 0.25f;
