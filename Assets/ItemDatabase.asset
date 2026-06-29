@@ -19,3 +19,6 @@ MonoBehaviour:
   - id: raspberry
     name: Raspberry
     icon: {fileID: 1293817545, guid: 1942536c22ec63c4a94c4c1a23de3326, type: 3}
+  - id: wood
+    name: Wood
+    icon: {fileID: 1781007358, guid: 1942536c22ec63c4a94c4c1a23de3326, type: 3}

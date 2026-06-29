@@ -39,6 +39,11 @@ public class InteractionScript : MonoBehaviour
             currentInteractable = null;
         }
     } 
+
+    public bool CanInteract()
+    {
+        return currentInteractable != null;
+    }
     void Awake()
     {
         // Singleton pattern to ensure only one instance of PlayerScript exists

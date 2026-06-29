@@ -20,7 +20,7 @@ public class WorldRendererScript : MonoBehaviour
     public TileBase gravelTile;
 
     [Header("Fine tuning")]
-    [SerializeField] private float yOffset = 0.25f;
+    [SerializeField] public float yOffset = 0.25f;
 
     [SerializeField] GameObject spawnedObjectsParent;
 

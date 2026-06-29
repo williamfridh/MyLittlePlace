@@ -39,6 +39,9 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     private Coroutine flashCoroutine;
 
+    [Header("UI")]
+    [SerializeField] private GameObject interactionInstruction;
+
     void Awake()
     {
         // Singleton pattern to ensure only one instance of PlayerScript exists
@@ -180,6 +183,12 @@ public class PlayerScript : MonoBehaviour
         // Update save state (don't trigger save)
         SaveManagerScript.Instance.playerSave.x_pos = playerPos.x;
         SaveManagerScript.Instance.playerSave.y_pos = playerPos.y;
+
+        // Update UI
+        if (InteractionScript.Instance && interactionInstruction != null)
+        {
+            interactionInstruction.SetActive(InteractionScript.Instance.CanInteract());
+        }
 
         // Stop if game is paused
         if (GameStateScript.Instance.paused) return;

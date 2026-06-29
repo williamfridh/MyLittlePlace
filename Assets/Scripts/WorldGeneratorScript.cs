@@ -23,6 +23,10 @@ public class WorldGeneratorScript : MonoBehaviour
     [SerializeField] float noise = 0.1f;
     [SerializeField] int campRadius = 3;
 
+    [Header("Spawn amounts")]
+    [SerializeField] int woodPileSpawnAmount = 50;
+    [SerializeField, Range(0f, 1f)] float plantDensity = 0.25f;
+
     /// <summary>
     /// Used for converting numbers to descriptive buckets for easier
     /// biome selection and interpretation.
@@ -252,12 +256,15 @@ public class WorldGeneratorScript : MonoBehaviour
             {
                 WorldCell cell = world.GetCell(x, y);
 
+                // Avoid occupied and creating too dense nature
                 if (cell.occupied) continue;
+                if (UnityEngine.Random.Range(0f, 1f) > plantDensity) continue;
 
                 float nutrition = cell.nutrition;
                 float elevation = cell.elevation;
 
                 float location_quality = (nutrition * 0.8f) + ((1.0f - elevation) * 0.2f); // Higher nutrition and lower elevation means better location for plants
+                location_quality /= 0.8f;
                 float spawnChange = UnityEngine.Random.Range(0.0f, 0.5f + location_quality * 0.5f);
 
                 switch (cell.biomeType)
@@ -286,7 +293,7 @@ public class WorldGeneratorScript : MonoBehaviour
                     case BiomeType.Forest:
                         if (spawnChange < 0.2f) {
                             break;
-                        } else if (spawnChange >= 0.2f && spawnChange < 0.40f && world.CanFitSize(x, y, 1, 1))
+                        } else if (spawnChange >= 0.35f && spawnChange < 0.40f && world.CanFitSize(x, y, 1, 1))
                         {
                             cell.AssignObject("thorn_bush_0");
                             world.MarkAsOccupied(x, y, 1, 1);
@@ -322,6 +329,19 @@ public class WorldGeneratorScript : MonoBehaviour
                 yield return null; 
             }
         }
+
+        // Add wood piles
+        SpawnerScript spawner = SpawnerScript.Instance;
+        int amount = woodPileSpawnAmount;
+        int safetyLimit = 100000000;
+        while (amount > 0 && safetyLimit > 0)
+        {
+            safetyLimit--;
+            if (spawner.SpawnWoodPile(false, world)) amount--;
+        }
+        if (safetyLimit <= 0) Debug.Log("WorldGeneratorScript: Limit reached for spawning wood piles.");
+
+
         Debug.Log("WorldGeneratorScript: Added nature");
         natureCheck.SetActive(true);
         yield return null;

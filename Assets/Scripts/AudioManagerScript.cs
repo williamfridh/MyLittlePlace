@@ -8,6 +8,7 @@ public class AudioManagerScript : MonoBehaviour
     [Header("Audio Sources")]
     [SerializeField] AudioSource jumpAudio;
     [SerializeField] AudioSource gatherAudio;
+    [SerializeField] AudioSource gatherWoodAudio;
     [SerializeField] AudioSource punchOne;
     [SerializeField] AudioSource punchTwo;
 
@@ -26,6 +27,11 @@ public class AudioManagerScript : MonoBehaviour
     public void PlayGatherSound()
     {
         if (gatherAudio != null) gatherAudio.Play();
+    }
+
+    public void PlayGatherWoodSound()
+    {
+        if (gatherWoodAudio != null) gatherWoodAudio.Play();
     }
 
     public void PlayPunchOneSound()
