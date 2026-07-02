@@ -23,6 +23,11 @@ public class BlueberryBush : MonoBehaviour, IInteractable
         }
     }
 
+    public bool CanInteract()
+    {
+        return amount > 0;
+    }
+
     void Start()
     {
         // If no berries on restart, restart timer

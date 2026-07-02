@@ -537,6 +537,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   paused: 0
+  worldRendered: 0
   usingComputer: 0
 --- !u!4 &1067900343
 Transform:
@@ -746,7 +747,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tomte's Work
+  m_text: Taskwood Trails
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: acbc19bf70cbd1447abad5a55705c859, type: 2}
   m_sharedMaterial: {fileID: 7533055114960662079, guid: acbc19bf70cbd1447abad5a55705c859, type: 2}
@@ -877,6 +878,7 @@ MonoBehaviour:
     cellGrid: []
   playerSave:
     life: 0
+    maxLife: 5
     x_pos: 0
     y_pos: 0
     position_initilized: 0
@@ -995,7 +997,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1550724905}
   - component: {fileID: 1550724904}
-  - component: {fileID: 1550724903}
   - component: {fileID: 1550724906}
   m_Layer: 0
   m_Name: Main Camera
@@ -1004,14 +1005,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1550724903
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1550724902}
-  m_Enabled: 1
 --- !u!20 &1550724904
 Camera:
   m_ObjectHideFlags: 0
@@ -1122,6 +1115,46 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!1 &1817058194
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1817058196}
+  - component: {fileID: 1817058195}
+  m_Layer: 0
+  m_Name: Audio Listener
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &1817058195
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1817058194}
+  m_Enabled: 1
+--- !u!4 &1817058196
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1817058194}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 931.2511, y: 321.8714, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1835463722
 GameObject:
   m_ObjectHideFlags: 0
@@ -1467,3 +1500,4 @@ SceneRoots:
   - {fileID: 1268901843}
   - {fileID: 1067900343}
   - {fileID: 36533529925616180}
+  - {fileID: 1817058196}

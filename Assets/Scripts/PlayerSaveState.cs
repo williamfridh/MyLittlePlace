@@ -14,7 +14,8 @@ public class InventoryItem
 public class PlayerSaveState
 {
 
-    public int life = 10;
+    public int life = 5;
+    public int maxLife = 5;
     public float x_pos;
     public float y_pos;
     public bool position_initilized = false;
@@ -22,6 +23,18 @@ public class PlayerSaveState
 
     // JsonUtility loading fallback
     public PlayerSaveState() { }
+
+    /// <summary>
+    /// Get amount of certain item from inventory.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public int GetItemAmount(string id)
+    {
+        InventoryItem item = inventory.Find(i => i.id == id);
+        if (item == null) return 0;
+        return item.amount;
+    }
 
     /// <summary>
     /// Adds to player inventory. Returns true/false depending on if the

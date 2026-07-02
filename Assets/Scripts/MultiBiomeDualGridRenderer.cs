@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections;
 using System.Collections.Generic;
+using NavMeshPlus.Components;
 
 public class MultiBiomeDualGridRenderer : MonoBehaviour
 {
@@ -14,13 +15,25 @@ public class MultiBiomeDualGridRenderer : MonoBehaviour
         public BiomeType biomeType;
         public TileBase[] sixteenTileSet;
     }
+    
+    [System.Serializable]
+    private class BiomeGroundTextureCollection
+    {
+        [SerializeField] public BiomeType biome;
+        [SerializeField] public List<TileBase> textureList;
+    }
 
     [SerializeField] private List<BiomeTileset> tilesetDatabase;
     private Dictionary<BiomeType, TileBase[]> biomeLookups;
 
+    [SerializeField] private NavMeshSurface navMeshSurface2DSmall;
+    [SerializeField] private NavMeshSurface navMeshSurface2DMedium;
+    [SerializeField] private NavMeshSurface navMeshSurface2DLarge;
+
     [Header("Tilemaps")]
     public Tilemap groundTilemap;
-    public Tilemap transitionTilemap;
+    public Tilemap groundTextureTilemap;
+    public Tilemap[] transitionTilemaps;
     public Tilemap waterTilemap;
 
     [Header("Uniform tiles")]
@@ -29,6 +42,10 @@ public class MultiBiomeDualGridRenderer : MonoBehaviour
     public TileBase mountainTile;
     public TileBase desertTile;
     public TileBase waterTile;
+    public TileBase CampTile;
+
+    [Header("Ground texture")]
+    [SerializeField] private List<BiomeGroundTextureCollection> biomeGroundTextures;
 
     [Header("Fine tuning")]
     [SerializeField] private float yOffset = 0.25f;
@@ -40,7 +57,7 @@ public class MultiBiomeDualGridRenderer : MonoBehaviour
 
     void DrawWorld(WorldSaveState world, int startX, int stopX, int startY, int stopY)
     {
-        // Pass 1: Flat tilemap
+    // Pass 1: Flat tilemap
     for (int x = startX; x < stopX; x++)
     {
         for (int y = startY; y < stopY; y++)
@@ -71,6 +88,12 @@ public class MultiBiomeDualGridRenderer : MonoBehaviour
                     Debug.LogError($"WorldRendererScript: Invalid biome type for cell ({x}, {y}). Tried using {cell.biomeType}");
                     break;
             }
+            // Add texture
+            if (cell.textureID > -1)
+            {
+                BiomeGroundTextureCollection collection = biomeGroundTextures.Find(i => i.biome == cell.biomeType);
+                groundTextureTilemap.SetTile(new Vector3Int(x, y, 0), collection.textureList[cell.textureID]);
+            }
         }
     }
 
@@ -81,7 +104,6 @@ public class MultiBiomeDualGridRenderer : MonoBehaviour
             {
 
                 WorldCell targetCell = world.GetCell(x, y);
-
                 if (targetCell == null)
                 {
                     Debug.LogError($"MultiBiomeDualGridRenderer: Could not find cell ({x}, {y}). Skipping cell...");
@@ -94,27 +116,49 @@ public class MultiBiomeDualGridRenderer : MonoBehaviour
                 int bl = (int)world.GetCell(x, y).biomeType;
                 int br = (int)world.GetCell(x + 1, y).biomeType;
 
-                // Detemine the highest dominant biome type
-                int maxDominance = Mathf.Max(tl, Mathf.Max(tr, Mathf.Max(bl, br)));
-                BiomeType dominantBiome = (BiomeType)maxDominance;
+                // Find unique biomes
+                List<int> presentBiomes = new List<int> {tl, tr, bl, br};
+                presentBiomes.Sort();
 
-                // Based on dominance, we calculate binary index mask
-                // This works because the tiles have a certain naming sceme
-                int bit0 = (tl == maxDominance) ? 1 : 0; // Value: 8
-                int bit1 = (tr == maxDominance) ? 1 : 0; // Value: 4
-                int bit2 = (bl == maxDominance) ? 1 : 0; // Value: 2
-                int bit3 = (br == maxDominance) ? 1 : 0; // Value: 1
-
-                int spriteIndex = (bit0 << 3) | (bit1 << 2) | (bit2 << 1) | bit3;
-
-                // If sprite index is zero, we fall back to the ground tilemap
-                if (spriteIndex == 0) continue;
-
-                // Get correct tile and place on tilemap
-                if (biomeLookups.TryGetValue(dominantBiome, out TileBase[] currentTileset))
+                List<int> uniqueBiomes = new List<int>();
+                foreach (int b in presentBiomes)
                 {
-                    TileBase chosenTile = currentTileset[spriteIndex];
-                    transitionTilemap.SetTile(new Vector3Int(x, y, 0), chosenTile);
+                    if (!uniqueBiomes.Contains(b)) uniqueBiomes.Add(b);
+                }
+
+                // Iterate trough the unique biomes (but skipping 0 as pass 1 acts as base)
+                int layerIndex = 0;
+                for (int i = 1; i < uniqueBiomes.Count; i++)
+                {
+                    int currentDominance = uniqueBiomes[i];
+                    BiomeType currentBiome = (BiomeType) currentDominance;
+
+                    // Based on dominance, we calculate binary index mask
+                    // This works because the tiles have a certain naming sceme
+                    int bit0 = (tl >= currentDominance) ? 1 : 0; // Value: 8
+                    int bit1 = (tr >= currentDominance) ? 1 : 0; // Value: 4
+                    int bit2 = (bl >= currentDominance) ? 1 : 0; // Value: 2
+                    int bit3 = (br >= currentDominance) ? 1 : 0; // Value: 1
+
+                    int spriteIndex = (bit0 << 3) | (bit1 << 2) | (bit2 << 1) | bit3;
+
+                    // If sprite index is zero, we fall back to the ground tilemap
+                    if (spriteIndex == 0) continue;
+
+                    // Get correct tile and place on tilemap
+                    if (biomeLookups.TryGetValue(currentBiome, out TileBase[] currentTileset))
+                    {
+                        TileBase chosenTile = currentTileset[spriteIndex];
+                        if (layerIndex < transitionTilemaps.Length)
+                        {
+                            transitionTilemaps[layerIndex].SetTile(new Vector3Int(x, y, 0), chosenTile);
+                            layerIndex++;
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"Not enough transition tilemaps to handle intersection at {x},{y}");
+                        }
+                    }
                 }
 
                 // Add object
@@ -123,7 +167,7 @@ public class MultiBiomeDualGridRenderer : MonoBehaviour
                     GameObject objectPrefab = GetPrefabByID(targetCell.objectID);
                     if (objectPrefab == null)
                     {
-                        Debug.LogWarning($"MultiBiomeDualGridRenderer: Cannot find prefab for {targetCell.objectID} {targetCell.objectID} for cell ({x}, {y})!");
+                        Debug.LogWarning($"MultiBiomeDualGridRenderer: Cannot find prefab for {targetCell.objectID} for cell ({x}, {y})!");
                         continue;
                     }
                     Instantiate(objectPrefab, new Vector3(x, y + yOffset, 0), Quaternion.identity, spawnedObjectsParent.transform); // Note that we draw each object +0.5 on y axis.
@@ -182,8 +226,30 @@ public class MultiBiomeDualGridRenderer : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        StartCoroutine(Initilize());
+    }
+
+    private IEnumerator Initilize()
+    {
+        // Draw world
         WorldSaveState world = SaveManagerScript.Instance.worldSave;
         DrawWorld(world, 0, world.width, 0, world.height);
+
+        // Wait for the end of th frame
+        yield return new WaitForEndOfFrame();
+
+        // Build navigation mesh
+        if (navMeshSurface2DSmall)
+            yield return navMeshSurface2DSmall.BuildNavMeshAsync();
+
+        if (navMeshSurface2DMedium)
+            yield return navMeshSurface2DMedium.BuildNavMeshAsync();
+
+        if (navMeshSurface2DLarge)
+            yield return navMeshSurface2DLarge.BuildNavMeshAsync();
+
+        // Spawn NPCs
+        SpawnerScript.Instance.Initilize();
     }
 }
 

@@ -54,13 +54,6 @@ public class WeatherManagerScript : MonoBehaviour
 
      void Start()
     {
-        // Stop if no WorldGeneratorScript is present
-        if (WorldRendererScript.Instance == null)
-        {
-            Debug.LogError("WeatherManagerScript: No WorldRendererScript instance found in the scene.");
-            enabled = false;
-            return;
-        }
         // Stop if no PlayerScript is present
         if (PlayerScript.Instance == null)
         {

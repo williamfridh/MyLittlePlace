@@ -8,9 +8,15 @@ public class DamageOnTouchScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Only trigger for player and if player instance exists
-        if (!other.CompareTag("Player") || PlayerScript.Instance == null) return;
         Debug.Log("DamageOnTouchScript: Trigger");
-        PlayerScript.Instance.TakeDamage(damage, pushback, transform.position);
+        Unit playerUnit = other.GetComponent<Unit>();
+        if (playerUnit != null)
+        {
+            playerUnit.Damage(damage, pushback, transform.position);
+        }
+        else
+        {
+            Debug.LogWarning("DamageOnTouchScript: No Unit component found on the colliding object.");
+        }
     }
 }

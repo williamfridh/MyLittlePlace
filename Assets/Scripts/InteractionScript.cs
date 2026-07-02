@@ -28,6 +28,7 @@ public class InteractionScript : MonoBehaviour
     {
         IInteractable interactable = other.GetComponent<IInteractable>();
         if (interactable == null) return;
+        if (!interactable.CanInteract()) return;
         currentInteractable = interactable;
     }
 
@@ -39,6 +40,11 @@ public class InteractionScript : MonoBehaviour
             currentInteractable = null;
         }
     } 
+
+    public bool CanInteract()
+    {
+        return currentInteractable != null;
+    }
     void Awake()
     {
         // Singleton pattern to ensure only one instance of PlayerScript exists

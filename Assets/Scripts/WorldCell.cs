@@ -24,6 +24,7 @@ public class WorldCell
     public BiomeType biomeType;
     public string objectID; // String such as "rock" or "birch"
     public string propID; // String such as "grass" or "busch"
+    public int textureID = -1;
     public BiomeSelectionScale temperature;
     public BiomeSelectionScale moisture;
     public float elevation;
@@ -36,5 +37,10 @@ public class WorldCell
         objectID = id;
         occupied = true;
         return true;
+    }
+
+    public void AssignTexture(int id)
+    {
+        textureID = id;
     }
 }

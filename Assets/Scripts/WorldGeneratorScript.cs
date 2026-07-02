@@ -23,6 +23,10 @@ public class WorldGeneratorScript : MonoBehaviour
     [SerializeField] float noise = 0.1f;
     [SerializeField] int campRadius = 3;
 
+    [Header("Spawn amounts")]
+    [SerializeField] int woodPileSpawnAmount = 50;
+    [SerializeField, Range(0f, 1f)] float plantDensity = 0.25f;
+
     /// <summary>
     /// Used for converting numbers to descriptive buckets for easier
     /// biome selection and interpretation.
@@ -253,66 +257,124 @@ public class WorldGeneratorScript : MonoBehaviour
                 WorldCell cell = world.GetCell(x, y);
 
                 if (cell.occupied) continue;
+                if (UnityEngine.Random.Range(0f, 1f) > plantDensity) continue;
 
                 float nutrition = cell.nutrition;
                 float elevation = cell.elevation;
 
                 float location_quality = (nutrition * 0.8f) + ((1.0f - elevation) * 0.2f); // Higher nutrition and lower elevation means better location for plants
+                location_quality /= nutrition * 0.8f;
                 float spawnChange = UnityEngine.Random.Range(0.0f, 0.5f + location_quality * 0.5f);
+
+                float texture_rand;
 
                 switch (cell.biomeType)
                 {
                     case BiomeType.Meadow:
-                        if (spawnChange < 0.2f) {
-                            break;
-                        } else if (spawnChange >= 0.2f && spawnChange < 0.45f && world.CanFitSize(x, y, 1, 1))
+                        if (!cell.occupied)
                         {
-                            cell.AssignObject("bush_0");
-                            world.MarkAsOccupied(x, y, 1, 1);
-                        } else if (spawnChange >= 0.45f && spawnChange < 0.5f && world.CanFitSize(x, y, 1, 1))
+                            if (spawnChange < 0.2f) {
+                                break;
+                            } else if (spawnChange >= 0.2f && spawnChange < 0.45f && world.CanFitSize(x, y, 1, 1))
+                            {
+                                cell.AssignObject("bush_0");
+                                world.MarkAsOccupied(x, y, 1, 1);
+                            } else if (spawnChange >= 0.45f && spawnChange < 0.5f && world.CanFitSize(x, y, 1, 1))
+                            {
+                                cell.AssignObject("raspberry_bush_0");
+                                world.MarkAsOccupied(x, y, 1, 1);
+                            } else if (spawnChange > 0.5f && spawnChange < 0.8f && world.CanFitSize(x, y, 1, 2)) {
+                                cell.AssignObject("tree_birch");
+                                world.MarkAsOccupied(x, y, 1, 2);
+                            } else if (spawnChange >= 0.8f && world.CanFitSize(x, y, 2, 2)) {
+                                cell.AssignObject("tree_oak");
+                                world.MarkAsOccupied(x, y, 2, 2);
+                            } else {
+                                // ...
+                            }
+                        }
+                        // Add texture
+                        texture_rand = UnityEngine.Random.Range(0f, nutrition) / nutrition;
+                        if (texture_rand >= 0.6)
                         {
-                            cell.AssignObject("raspberry_bush_0");
-                            world.MarkAsOccupied(x, y, 1, 1);
-                        } else if (spawnChange > 0.5f && spawnChange < 0.8f && world.CanFitSize(x, y, 1, 2)) {
-                            cell.AssignObject("tree_birch");
-                            world.MarkAsOccupied(x, y, 1, 2);
-                        } else if (spawnChange >= 0.8f && world.CanFitSize(x, y, 2, 2)) {
-                            cell.AssignObject("tree_oak");
-                            world.MarkAsOccupied(x, y, 2, 2);
-                        } else {
-                            // ...
+                            cell.AssignTexture(1);
+                        }
+                        else if (texture_rand >= 0.2)
+                        {
+                            cell.AssignTexture(0);
                         }
                         break;
+
                     case BiomeType.Forest:
-                        if (spawnChange < 0.2f) {
-                            break;
-                        } else if (spawnChange >= 0.2f && spawnChange < 0.40f && world.CanFitSize(x, y, 1, 1))
+                        if (!cell.occupied)
                         {
-                            cell.AssignObject("thorn_bush_0");
-                            world.MarkAsOccupied(x, y, 1, 1);
-                        } else if (spawnChange >= 0.40f && spawnChange < 0.45f && world.CanFitSize(x, y, 1, 1))
+                            if (spawnChange < 0.2f) {
+                                break;
+                            } else if (spawnChange >= 0.34f && spawnChange < 0.35f && world.CanFitSize(x, y, 1, 1))
+                            {
+                                cell.AssignObject("fly_agaric");
+                                world.MarkAsOccupied(x, y, 1, 1);
+                            } else if (spawnChange >= 0.35f && spawnChange < 0.40f && world.CanFitSize(x, y, 1, 1))
+                            {
+                                cell.AssignObject("thorn_bush_0");
+                                world.MarkAsOccupied(x, y, 1, 1);
+                            } else if (spawnChange >= 0.40f && spawnChange < 0.45f && world.CanFitSize(x, y, 1, 1))
+                            {
+                                cell.AssignObject("blueberry_bush_0");
+                                world.MarkAsOccupied(x, y, 1, 1);
+                            } else if (spawnChange >= 0.45f && spawnChange < 0.5f && world.CanFitSize(x, y, 1, 1))
+                            {
+                                cell.AssignObject("blueberry_bush_0");
+                                world.MarkAsOccupied(x, y, 1, 1);
+                            } else if (spawnChange >= 0.5f && spawnChange < 0.8f && world.CanFitSize(x, y, 2, 1)) {
+                                cell.AssignObject("tree_pine");
+                                world.MarkAsOccupied(x, y, 2, 1);
+                            }  else if (spawnChange >= 0.8f && world.CanFitSize(x, y, 2, 2)) {
+                                cell.AssignObject("tree_oak");
+                                world.MarkAsOccupied(x, y, 2, 2);
+                            } else {
+                                // ...
+                            }
+                        }
+                        // Add texture
+                        texture_rand = UnityEngine.Random.Range(0f, nutrition) / nutrition;
+                        if (texture_rand >= 0.6)
                         {
-                            cell.AssignObject("blueberry_bush_0");
-                            world.MarkAsOccupied(x, y, 1, 1);
-                        } else if (spawnChange >= 0.45f && spawnChange < 0.5f && world.CanFitSize(x, y, 1, 1))
+                            cell.AssignTexture(1);
+                        }
+                        else if (texture_rand >= 0.2)
                         {
-                            cell.AssignObject("blueberry_bush_0");
-                            world.MarkAsOccupied(x, y, 1, 1);
-                        } else if (spawnChange >= 0.5f && spawnChange < 0.8f && world.CanFitSize(x, y, 2, 1)) {
-                            cell.AssignObject("tree_pine");
-                            world.MarkAsOccupied(x, y, 2, 1);
-                        }  else if (spawnChange >= 0.8f && world.CanFitSize(x, y, 2, 2)) {
-                            cell.AssignObject("tree_oak");
-                            world.MarkAsOccupied(x, y, 2, 2);
-                        } else {
-                            // ...
+                            cell.AssignTexture(0);
                         }
                         break;
+
                     case BiomeType.Mountain:
+                        // Add texture
+                        texture_rand = UnityEngine.Random.Range(0f, nutrition) / nutrition;
+                        if (texture_rand >= 0.6)
+                        {
+                            cell.AssignTexture(1);
+                        }
+                        else if (texture_rand >= 0.2)
+                        {
+                            cell.AssignTexture(0);
+                        }
                         break;
+
                     case BiomeType.Water:
                         break;
+
                     case BiomeType.Desert:
+                        // Add texture
+                        texture_rand = UnityEngine.Random.Range(0f, nutrition) / nutrition;
+                        if (texture_rand >= 0.6)
+                        {
+                            cell.AssignTexture(1);
+                        }
+                        else if (texture_rand >= 0.2)
+                        {
+                            cell.AssignTexture(0);
+                        }
                         break;
                 }
             }
@@ -322,6 +384,19 @@ public class WorldGeneratorScript : MonoBehaviour
                 yield return null; 
             }
         }
+
+        // Add wood piles
+        SpawnerScript spawner = SpawnerScript.Instance;
+        int amount = woodPileSpawnAmount;
+        int safetyLimit = 100000000;
+        while (amount > 0 && safetyLimit > 0)
+        {
+            safetyLimit--;
+            if (spawner.SpawnWoodPile(false, world)) amount--;
+        }
+        if (safetyLimit <= 0) Debug.Log("WorldGeneratorScript: Limit reached for spawning wood piles.");
+
+
         Debug.Log("WorldGeneratorScript: Added nature");
         natureCheck.SetActive(true);
         yield return null;

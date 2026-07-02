@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameStateScript : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class GameStateScript : MonoBehaviour
 
     [Header("Current State")]
     [SerializeField] public bool paused = false;
+    [SerializeField] public bool worldRendered = false;
 
     public bool usingComputer = false;
 
@@ -16,11 +18,32 @@ public class GameStateScript : MonoBehaviour
         if (targetState && SaveManagerScript.Instance != null) SaveManagerScript.Instance.SaveAll();
     }
 
-    void Awake()
+    private void Awake()
     {
-        // Enforce Singleton pattern
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        // Enforce Singleton Pattern
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            
+            // Subscribe to scene loading events
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe form event to prveent memoery leaks
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Main Menu") Destroy(gameObject);
     }
 
     void Start()

@@ -48,7 +48,7 @@ MonoBehaviour:
   biomeTracks:
   - biomeType: 100
     audioSource: {fileID: 1146181370140846733}
-    maxVolume: 0.6
+    maxVolume: 0.2
     playlist:
     - {fileID: 8300000, guid: 986a3b8b618cba34fa4e93b1dcd01f03, type: 3}
     - {fileID: 8300000, guid: f678c9d3d4ce0a047890fa6e7bf563b9, type: 3}
@@ -74,7 +74,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 0
   Mute: 0

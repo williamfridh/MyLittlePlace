@@ -162,4 +162,48 @@ public class WorldSaveState
             }
         }
     }
+
+    public void AssignObjectToPosition(int x, int y, string object_id)
+    {
+        WorldCell cell = GetCell(x, y);
+        cell.AssignObject(object_id);
+    }
+
+
+    /// <summary>
+    /// Get random world position using or not using biome restriction.
+    /// </summary>
+    /// <param name="biome"></param>
+    /// <returns></returns>
+    public Vector2Int? GetRandomPosition(BiomeType biome)
+    {
+        if (cellGrid == null || cellGrid.Count == 0)
+        {
+            Debug.LogWarning("WorldSaveState: Cannot run GetRandomCell due to missing world cells!");
+            return null;
+        }
+
+        int attempt = 0;
+        int maxAttempts = Mathf.Clamp((int)(cellGrid.Count * 0.25f), 10, 1000);
+
+        int worldWidth = SaveManagerScript.Instance.worldSave.width;
+        int worldHeight = SaveManagerScript.Instance.worldSave.height;
+
+        while (attempt < maxAttempts)
+        {
+            attempt++;
+            int randomIndex = UnityEngine.Random.Range(0, cellGrid.Count);
+            WorldCell candidate = cellGrid[randomIndex];
+
+            if (candidate.occupied) continue;
+
+            if (biome != candidate.biomeType) continue;
+
+            int x = randomIndex % width;
+            int y = randomIndex / width;
+            return new Vector2Int(x, y);
+        }
+
+        return null;
+    }
 }

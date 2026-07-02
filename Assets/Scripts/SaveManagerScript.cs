@@ -38,6 +38,16 @@ public class SaveManagerScript : MonoBehaviour
 
     public async void Load(bool forceNewTodo, bool forceNewWorld, bool forceNewPlayer)
     {
+        // Make sure directory exists
+        if (!SaveExists())
+        {
+            // Create missing dir.
+            string dirPath = System.IO.Path.GetDirectoryName(todoSavePath);
+            if (!string.IsNullOrEmpty(dirPath))
+            {
+                System.IO.Directory.CreateDirectory(dirPath);
+            }
+        }
         // Load todo
         if (!System.IO.File.Exists(todoSavePath) || forceNewTodo)
         {
@@ -178,7 +188,8 @@ public class SaveManagerScript : MonoBehaviour
     /// <param name="pauseStatus"></param>
     private void OnApplicationPause(bool pauseStatus)
     {
-        if (pauseStatus) SaveAllSynchronous();
+        Debug.Log("SaveManagerScript: Pause detected");
+        if (PlayerScript.Instance && pauseStatus) SaveAllSynchronous();
     }
 
     /// <summary>
@@ -186,7 +197,8 @@ public class SaveManagerScript : MonoBehaviour
     /// </summary>
     private void OnApplicationQuit()
     {
-        SaveAllSynchronous();
+        Debug.Log("SaveManagerScript: Quit detected");
+        if (PlayerScript.Instance) SaveAllSynchronous();
     }
 
     private void SaveAllSynchronous()
@@ -210,9 +222,9 @@ public class SaveManagerScript : MonoBehaviour
         }
 
         // Set paths
-        todoSavePath = Application.persistentDataPath + "/" + fileNameTodoSave;
-        worldSavePath = Application.persistentDataPath + "/" + fileNameWorldSave;
-        playerSavePath = Application.persistentDataPath + "/" + fileNamePlayerSave;
+        todoSavePath = Application.persistentDataPath + "/save/default/" + fileNameTodoSave;
+        worldSavePath = Application.persistentDataPath + "/save/default/" + fileNameWorldSave;
+        playerSavePath = Application.persistentDataPath + "/save/default/" + fileNamePlayerSave;
     }
 
     void Start()

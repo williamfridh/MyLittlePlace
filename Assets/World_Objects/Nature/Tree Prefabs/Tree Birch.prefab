@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 8658005910264713418}
   - component: {fileID: 723914036896805935}
   - component: {fileID: -700481423657353348}
-  m_Layer: 14
+  - component: {fileID: 1685832557978345707}
+  m_Layer: 7
   m_Name: Tree Birch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +86,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 29504202e66117f47bcf1ef380aaa746, type: 3}
+  m_Sprite: {fileID: 3611188691014843535, guid: ac5a11ae3cc01035ca01635cad75a6d3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -169,6 +170,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldObjectIdentity
   uniqueObjectID: tree_birch
+--- !u!114 &1685832557978345707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8558546297532487101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9809bf1345abc5648af68b3a82653f08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NavMeshPlus::NavMeshPlus.Components.NavMeshModifier
+  m_OverrideArea: 1
+  m_Area: 1
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
 --- !u!1001 &7135992198363061818
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -180,6 +197,10 @@ PrefabInstance:
     - target: {fileID: 751304708816167302, guid: 6c3cdd07db1e3964d968e45509a44f8f, type: 3}
       propertyPath: m_Name
       value: shadow_32x32
+      objectReference: {fileID: 0}
+    - target: {fileID: 751304708816167302, guid: 6c3cdd07db1e3964d968e45509a44f8f, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 849253591127786098, guid: 6c3cdd07db1e3964d968e45509a44f8f, type: 3}
       propertyPath: m_LocalPosition.x

@@ -5,12 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/Test Scene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
     path: Assets/Scenes/Main Menu.unity
     guid: 2669fce686259404f89afd8224604f48
+  - enabled: 0
+    path: Assets/Scenes/Test Scene.unity
+    guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
     path: Assets/Scenes/World Generate.unity
     guid: b5eb97a7e180089469976e2288fdf2d4
@@ -20,5 +20,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/World.unity
     guid: 9f5af682ef7e800798d3be4251bc813f
+  - enabled: 1
+    path: Assets/Scenes/New World Menu.unity
+    guid: e8212c28e2f4c804eb6e89269c09bd19
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

@@ -461,8 +461,10 @@ MonoBehaviour:
   finalCheck: {fileID: 1093937533}
   width: 300
   height: 300
-  noise: 0.08
+  noise: 0.04
   campRadius: 3
+  woodPileSpawnAmount: 700
+  plantDensity: 0.46
 --- !u!4 &304863257
 Transform:
   m_ObjectHideFlags: 0
@@ -1557,6 +1559,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 890069290}
   m_CullTransparentMesh: 1
+--- !u!1001 &893089167
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1026380131693373824, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: woodPileSpawnTimer
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 8015521659415060290, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_Name
+      value: Spawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 8824886478788657880, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 148.87225
+      objectReference: {fileID: 0}
+    - target: {fileID: 8824886478788657880, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 158.63684
+      objectReference: {fileID: 0}
+    - target: {fileID: 8824886478788657880, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8824886478788657880, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8824886478788657880, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8824886478788657880, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8824886478788657880, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8824886478788657880, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8824886478788657880, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8824886478788657880, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ddaffd5a6b68725489b38e65a15d8461, type: 3}
 --- !u!1 &1089870619
 GameObject:
   m_ObjectHideFlags: 0
@@ -1732,6 +1795,7 @@ MonoBehaviour:
   todoMenuPanel: {fileID: 0}
   hudPanel: {fileID: 0}
   addTodoMenuPanel: {fileID: 0}
+  inventoryPanel: {fileID: 0}
 --- !u!114 &1153193631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2290,6 +2354,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1377399274}
   m_CullTransparentMesh: 1
+--- !u!1 &1502350460
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1502350462}
+  - component: {fileID: 1502350461}
+  m_Layer: 0
+  m_Name: Audio Listener
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &1502350461
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1502350460}
+  m_Enabled: 1
+--- !u!4 &1502350462
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1502350460}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 931.2511, y: 321.8714, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1677015365
 GameObject:
   m_ObjectHideFlags: 0
@@ -2563,11 +2667,15 @@ MonoBehaviour:
     worldCreatedAt: 
     width: 0
     height: 0
+    spawnX: 0
+    spawnY: 0
     cellGrid: []
   playerSave:
     life: 0
+    maxLife: 5
     x_pos: 0
     y_pos: 0
+    position_initilized: 0
     inventory: []
 --- !u!4 &2028227666
 Transform:
@@ -2955,3 +3063,5 @@ SceneRoots:
   - {fileID: 304863257}
   - {fileID: 1153193634}
   - {fileID: 2028227666}
+  - {fileID: 893089167}
+  - {fileID: 1502350462}
