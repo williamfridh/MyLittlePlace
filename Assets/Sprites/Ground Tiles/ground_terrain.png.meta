@@ -192,7 +192,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_8
+      name: forest_ground_texture_1
       rect:
         serializedVersion: 2
         x: 0
@@ -214,7 +214,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_9
+      name: meadow_ground_texture_1
       rect:
         serializedVersion: 2
         x: 32
@@ -236,7 +236,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_10
+      name: mountain_ground_texture_1
       rect:
         serializedVersion: 2
         x: 64
@@ -258,7 +258,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_11
+      name: sand_ground_texture_1
       rect:
         serializedVersion: 2
         x: 96
@@ -302,7 +302,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: forest
+      name: forest_ground_texture_0
       rect:
         serializedVersion: 2
         x: 0
@@ -324,7 +324,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: meadow
+      name: meadow_ground_texture_0
       rect:
         serializedVersion: 2
         x: 32
@@ -346,7 +346,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: moutain
+      name: mountain_ground_texture_0
       rect:
         serializedVersion: 2
         x: 64
@@ -368,7 +368,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: desert
+      name: sand_ground_texture_0
       rect:
         serializedVersion: 2
         x: 96
@@ -478,15 +478,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ground_terrain_16
+      name: Fly Agaric
       rect:
         serializedVersion: 2
         x: 0
         y: 160
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -1551,18 +1551,16 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":true,"isAlternate":false}'
     nameFileIdTable:
+      Fly Agaric: -74379935
       blueberry_bush_base: -1755032197
       blueberry_bush_berries: 1034643231
-      desert: 1445061746
-      forest: 7726320054572662708
+      forest_ground_texture_0: 7726320054572662708
+      forest_ground_texture_1: 1792514856
       grass_0: -1726425084
-      ground_terrain_10: 2143680301
-      ground_terrain_11: 2056322775
       ground_terrain_12: -55331651
       ground_terrain_13: 908468713
       ground_terrain_14: 1955533857
       ground_terrain_15: 2084117483
-      ground_terrain_16: -74379935
       ground_terrain_20: 768076574
       ground_terrain_21: -52243208
       ground_terrain_22: 2115178978
@@ -1606,12 +1604,14 @@ TextureImporter:
       ground_terrain_62: 742906229
       ground_terrain_63: 2107653420
       ground_terrain_7: -2043554961
-      ground_terrain_8: 1792514856
-      ground_terrain_9: -751621729
-      meadow: -1566920474
-      moutain: -1827490776
+      meadow_ground_texture_0: -1566920474
+      meadow_ground_texture_1: -751621729
+      mountain_ground_texture_0: -1827490776
+      mountain_ground_texture_1: 2143680301
       raspberry_bush_base: -665217028
       raspberry_bush_berries: -2135001018
+      sand_ground_texture_0: 1445061746
+      sand_ground_texture_1: 2056322775
       thorn_0: -873626710
       thorn_1: 2100336003
       water: 1208515914

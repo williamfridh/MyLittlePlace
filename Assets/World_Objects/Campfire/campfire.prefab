@@ -5163,6 +5163,8 @@ GameObject:
   - component: {fileID: 1130149473301108226}
   - component: {fileID: 6355290442446518509}
   - component: {fileID: 6926713289199131284}
+  - component: {fileID: 5395169308691978712}
+  - component: {fileID: 5460202722723635896}
   m_Layer: 6
   m_Name: campfire
   m_TagString: Untagged
@@ -5188,6 +5190,7 @@ Transform:
   - {fileID: 4839757678216443074}
   - {fileID: 371389767884807910}
   - {fileID: 3671710025312319117}
+  - {fileID: 4515409380663897171}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &56629911482341086
@@ -5203,12 +5206,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   fireParticles: {fileID: 3203275347682402280}
+  maxFuel: 10
   fuel: 10
+  fuelInteractLimit: 9
   audioSource: {fileID: 6355290442446518509}
   campfireAlive: {fileID: 6448237930755614115}
   campfireDead: {fileID: 3902025115007519817}
   lightSource: {fileID: 3856354964119163036}
   burnRatePerGameHour: 1
+  healingArea: {fileID: 0}
 --- !u!61 &1130149473301108226
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5365,6 +5371,124 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldObjectIdentity
   uniqueObjectID: campfire
+--- !u!58 &5395169308691978712
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7829531000446244119}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.4933691, y: 0.2175731}
+  m_Radius: 0.6195116
+--- !u!114 &5460202722723635896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7829531000446244119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 1
+  m_Area: 1
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
+--- !u!1001 &797477552026412140
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4097075514465769906}
+    m_Modifications:
+    - target: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228832031070643190, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+      propertyPath: m_Name
+      value: Healing Area
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+--- !u!4 &4515409380663897171 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3871056582763726911, guid: 9c28224aaa653a145a4016b794c0a24a, type: 3}
+  m_PrefabInstance: {fileID: 797477552026412140}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4124645749707158783
 PrefabInstance:
   m_ObjectHideFlags: 0

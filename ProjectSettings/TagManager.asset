@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - TodoEntry
   layers:
   - Default
   - TransparentFX
@@ -16,9 +17,9 @@ TagManager:
   - JumpingPlayer
   - Player
   - Props
-  - 
-  - 
-  - 
+  - NavMesh
+  - Ground
+  - NPC
   - 
   - 
   - 

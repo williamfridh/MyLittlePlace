@@ -346,7 +346,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 16x16_10
+      name: icon_16x16_boar
       rect:
         serializedVersion: 2
         x: 32
@@ -478,7 +478,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 16x16_16
+      name: axe
       rect:
         serializedVersion: 2
         x: 0
@@ -1549,13 +1549,11 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":16.0,"y":16.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":true,"isAlternate":false}'
     nameFileIdTable:
-      16x16_10: -860530115
       16x16_11: -1813015027
       16x16_12: 830305768
       16x16_13: 2036459309
       16x16_14: -1689479833
       16x16_15: 1083181248
-      16x16_16: 2082751680
       16x16_17: 382787486
       16x16_18: -1571514099
       16x16_19: -1121144219
@@ -1610,8 +1608,10 @@ TextureImporter:
       16x16_63: 264634704
       16x16_7: -2088371782
       16x16_9: 1781007358
+      axe: 2082751680
       blueberry: -145456891
       heart: -1809196875
+      icon_16x16_boar: -860530115
       raspberry: 1293817545
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

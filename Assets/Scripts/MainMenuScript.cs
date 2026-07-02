@@ -15,6 +15,25 @@ public class MainMenuScript : MonoBehaviour
 
     public void HandleNewGameClick()
     {
+        MenuButtonAudio.Instance.PlayClickSound();
+        if (SaveManagerScript.Instance.SaveExists())
+        {
+            SceneManager.LoadScene("New World Menu");
+        }
+        else
+        {
+            SceneManager.LoadScene("World Generate");
+        }
+    }
+
+    public void HandleToMainMenuClick()
+    {
+        SceneManager.LoadScene("Main Menu");
+        MenuButtonAudio.Instance.PlayClickSound();
+    }
+
+    public void HandleConfirmNewGameClick()
+    {
         Debug.Log("MainMenuScript: Detected 'new game' click");
         MenuButtonAudio.Instance.PlayClickSound();
         SceneManager.LoadScene("World Generate");
@@ -41,8 +60,8 @@ public class MainMenuScript : MonoBehaviour
         else
         {
             Debug.Log("MainMenuScript: SaveManagerScript detected!");
-            startButton.SetActive(SaveManagerScript.Instance.SaveExists());
         }
+        if (startButton) startButton.SetActive(SaveManagerScript.Instance.SaveExists());
         // Play music
         AmbienceMusicManager.Instance.TransitionToBiome(BiomeType.Menu);
     }

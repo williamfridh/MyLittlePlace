@@ -48,7 +48,7 @@ public class InventoryPanelScript : MonoBehaviour
             _activeItemElements.Add(entryGo);
 
             InventoryItemScript entryScript = entryGo.GetComponent<InventoryItemScript>();
-            entryScript.Draw(visualAsset.icon, visualAsset.name, item.amount);
+            entryScript.Draw(visualAsset.icon, visualAsset.name, item.amount, visualAsset.description);
         }
         
     }

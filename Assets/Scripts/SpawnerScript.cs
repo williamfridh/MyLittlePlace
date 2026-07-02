@@ -20,6 +20,10 @@ public class SpawnerScript : MonoBehaviour
     [SerializeField] GameObject woodPilePrefab;
     [SerializeField] float woodPileSpawnTimer = 60f;
 
+    [Header("Enemies")]
+    [SerializeField] GameObject boarPrefab;
+    [SerializeField] int boarAmount = 20;
+
     [Header("General")]
     [SerializeField] GameObject spawnedObjectsParent;
 
@@ -40,9 +44,34 @@ public class SpawnerScript : MonoBehaviour
         }
     }
 
-    void Start()
+    public void Initilize()
     {
         StartCoroutine(SpawnWoodPileRoutine());
+
+        SpawnLostBoars(boarAmount);
+    }
+
+    public void SpawnLostBoars(int amount)
+    {
+        int boarCounter = 0;
+        while (boarCounter < amount)
+        {
+            boarCounter++;
+            // Get random position
+            Vector2Int? cell = SaveManagerScript.Instance.worldSave.GetRandomPosition(BiomeType.Meadow);
+            if (cell == null) continue;
+            Vector2Int cellCasted = (Vector2Int)cell;
+            Instantiate(
+                boarPrefab,
+                new Vector3(
+                    (float)cellCasted.x,
+                    (float)cellCasted.y,
+                    0f
+                    ),
+                Quaternion.identity,
+                spawnedObjectsParent.transform
+                );
+        }
     }
 
     private void OnDestroy()

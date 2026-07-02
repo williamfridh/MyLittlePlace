@@ -197,7 +197,7 @@ public class WorldSaveState
 
             if (candidate.occupied) continue;
 
-            if (biome != null && biome != candidate.biomeType) continue;
+            if (biome != candidate.biomeType) continue;
 
             int x = randomIndex % width;
             int y = randomIndex / width;

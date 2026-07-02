@@ -33,6 +33,9 @@ public class TodoManagerScript : MonoBehaviour
     [Header("Settings")]
     [SerializeField] public bool isEditing = false;
 
+    [Header("Rewards")]
+    [SerializeField] public int rewardLostBoarSpawn = 10;
+
     private int totalTodos;
     private int totalCompletedTodos;
 
@@ -116,6 +119,12 @@ public class TodoManagerScript : MonoBehaviour
 
     public void DeleteTodo(Todo todo)
     {
+        // Reward player for deleting a todo
+        if (todo.isComplete)
+        {
+            //SaveManagerScript.Instance.playerSave.AddToInventory("coin", 1);
+            SpawnerScript.Instance.SpawnLostBoars(rewardLostBoarSpawn);
+        }
         todoList.Remove(todo);
         SaveManagerScript.Instance.UpdateTodoList(todoList);
         Refresh();
@@ -184,7 +193,7 @@ public class TodoManagerScript : MonoBehaviour
         // Remove old list
         foreach (Transform child in todoContainer.transform)
         {
-            if (child.name == "Todo Amount") continue;
+            if (!child.CompareTag("TodoEntry")) continue;
             Destroy(child.gameObject);
         }
         // Draw new list

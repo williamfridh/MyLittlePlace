@@ -6,6 +6,7 @@ public class ItemVisualDefinition
 {
     public string id;
     public string name;
+    public string description;
     public Sprite icon;
 }
 

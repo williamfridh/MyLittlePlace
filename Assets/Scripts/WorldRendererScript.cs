@@ -2,11 +2,14 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 
 public class WorldRendererScript : MonoBehaviour
 {
 
     public static WorldRendererScript Instance { get; set; }
+
+    [SerializeField] private NavMeshSurface navMeshSurface2D;
 
     // Tiles
     [Header("Tile Settings")]
@@ -77,6 +80,7 @@ public class WorldRendererScript : MonoBehaviour
                 }
             }
         }
+        navMeshSurface2D.BuildNavMesh();
     }
 
     /// <summary>

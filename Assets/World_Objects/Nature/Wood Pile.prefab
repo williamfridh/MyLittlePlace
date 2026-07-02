@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2371378121575183689}
   - component: {fileID: 4523776201549476903}
   - component: {fileID: 2749721925281428852}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,8 @@ GameObject:
   - component: {fileID: 9024750953802705032}
   - component: {fileID: 2104435106768953563}
   - component: {fileID: 1960129274515751129}
-  m_Layer: 10
+  - component: {fileID: 739884976159989060}
+  m_Layer: 6
   m_Name: Wood Pile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,8 +192,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.5545873, y: 0.07}
-  m_Radius: 0.30419558
+  m_Offset: {x: 0.49602923, y: 0.07000001}
+  m_Radius: 0.4783085
 --- !u!114 &2104435106768953563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,6 +253,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.6520535, y: 0.2942786}
   m_EdgeRadius: 0
+--- !u!114 &739884976159989060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 681431577710142292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9809bf1345abc5648af68b3a82653f08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NavMeshPlus::NavMeshPlus.Components.NavMeshModifier
+  m_OverrideArea: 1
+  m_Area: 1
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
 --- !u!1 &7998307889724101422
 GameObject:
   m_ObjectHideFlags: 0
@@ -263,7 +280,7 @@ GameObject:
   - component: {fileID: 7614832305903813311}
   - component: {fileID: 786205418965854009}
   - component: {fileID: 9132752028242774634}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: Wrapper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -371,6 +388,10 @@ PrefabInstance:
     - target: {fileID: 751304708816167302, guid: 6c3cdd07db1e3964d968e45509a44f8f, type: 3}
       propertyPath: m_Name
       value: shadow_32x32
+      objectReference: {fileID: 0}
+    - target: {fileID: 751304708816167302, guid: 6c3cdd07db1e3964d968e45509a44f8f, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 849253591127786098, guid: 6c3cdd07db1e3964d968e45509a44f8f, type: 3}
       propertyPath: m_LocalScale.x

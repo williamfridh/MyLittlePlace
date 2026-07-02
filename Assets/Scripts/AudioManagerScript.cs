@@ -11,6 +11,7 @@ public class AudioManagerScript : MonoBehaviour
     [SerializeField] AudioSource gatherWoodAudio;
     [SerializeField] AudioSource punchOne;
     [SerializeField] AudioSource punchTwo;
+    [SerializeField] AudioSource fireStart;
 
     void Awake()
     {
@@ -42,5 +43,10 @@ public class AudioManagerScript : MonoBehaviour
     public void PlayPunchTwoSound()
     {
         if (punchTwo != null) punchTwo.Play();
+    }
+
+    public void PlayFireStartSound()
+    {
+        if (fireStart != null) fireStart.Play();
     }
 }

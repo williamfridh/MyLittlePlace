@@ -21,4 +21,9 @@ public class WoodPile : MonoBehaviour, IInteractable
             return false;
         }
     }
+
+    public bool CanInteract()
+    {
+        return true;
+    }
 }

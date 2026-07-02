@@ -28,6 +28,7 @@ public class InteractionScript : MonoBehaviour
     {
         IInteractable interactable = other.GetComponent<IInteractable>();
         if (interactable == null) return;
+        if (!interactable.CanInteract()) return;
         currentInteractable = interactable;
     }
 

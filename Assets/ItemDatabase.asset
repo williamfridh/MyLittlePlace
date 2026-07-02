@@ -15,10 +15,17 @@ MonoBehaviour:
   itemDefinitions:
   - id: blueberry
     name: Blueberry
+    description: Lost boars seems to like them!
     icon: {fileID: -145456891, guid: 1942536c22ec63c4a94c4c1a23de3326, type: 3}
   - id: raspberry
     name: Raspberry
+    description: Perhaps the animals enjoy them?
     icon: {fileID: 1293817545, guid: 1942536c22ec63c4a94c4c1a23de3326, type: 3}
   - id: wood
     name: Wood
+    description: Perfect campfire fuel
     icon: {fileID: 1781007358, guid: 1942536c22ec63c4a94c4c1a23de3326, type: 3}
+  - id: boar
+    name: Boar
+    description: Boars safe and sound
+    icon: {fileID: -860530115, guid: 1942536c22ec63c4a94c4c1a23de3326, type: 3}

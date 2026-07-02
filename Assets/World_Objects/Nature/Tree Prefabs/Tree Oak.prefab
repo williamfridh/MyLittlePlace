@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 8658005910264713418}
   - component: {fileID: 2811984427912765172}
   - component: {fileID: 5312015336400646089}
-  m_Layer: 14
+  - component: {fileID: 6800974744681840663}
+  m_Layer: 7
   m_Name: Tree Oak
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,7 +133,7 @@ BoxCollider2D:
   m_Offset: {x: 1.014148, y: 0.1310153}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0, y: 0}
     oldSize: {x: 2, y: 2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -169,6 +170,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldObjectIdentity
   uniqueObjectID: tree_oak
+--- !u!114 &6800974744681840663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8558546297532487101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9809bf1345abc5648af68b3a82653f08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NavMeshPlus::NavMeshPlus.Components.NavMeshModifier
+  m_OverrideArea: 1
+  m_Area: 1
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
 --- !u!1001 &918604857212794461
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -220,6 +237,10 @@ PrefabInstance:
     - target: {fileID: 7688650085054005108, guid: 8156102d875b88e4b96eaf2b886840e4, type: 3}
       propertyPath: m_Name
       value: shadow_64x64_smal
+      objectReference: {fileID: 0}
+    - target: {fileID: 7688650085054005108, guid: 8156102d875b88e4b96eaf2b886840e4, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
